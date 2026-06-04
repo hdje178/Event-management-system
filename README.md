@@ -1,171 +1,356 @@
-# FIT WebApp API — Професійний README (Навчальний бекенд + Security Showcase)
+# FIT Webapp
 
-Цей проєкт — навчальний REST API для керування подіями, користувачами та їхніми реєстраціями. Код демонструє коректні інженерні практики (DTO/валідація, централізовані помилки, пагінація, JOIN/COUNT, спрощені міграції, сидування), а також містить навмисно вразливий endpoint для демонстрації SQL Injection виключно в освітніх цілях.
+Вебзастосунок для управління подіями та реєстраціями з JWT автентифікацією.
 
-Посилання після запуску (PORT=3000 за замовчуванням):
-- Health‑check: http://localhost:3000/health
-- Swagger UI: http://localhost:3000/api/docs
+---
 
-## 1) About & Architecture
-- Стек: Node.js 18+, Express 5 (ESM), TypeScript
-- БД: SQLite (драйвер sqlite3), файл БД створюється автоматично
-- Валідація: Zod (через middleware validate)
-- Документація: swagger-jsdoc + swagger-ui-express
-- Аутентифікація/Паролі: bcryptjs (хешування паролів користувачів при створенні/оновленні)
-- Логування: простий middleware (метод, шлях, статус, тривалість)
+## Запуск проекту
 
-Архітектурні шари:
-- Routes — визначають HTTP-шляхи і вішають middleware/контролери (Backend/src/routes/*).
-- Controllers — приймають запити, дістають провалідовані дані з res.locals, викликають сервіси, формують HTTP-відповідь (Backend/src/controllers/*).
-- Services — бізнес-логіка, агрегації, обробка помилок SQLite → AppError (Backend/src/service/*).
-- Repositories — SQL доступ до БД, тільки параметризовані запити (all/get/run) за замовчуванням (Backend/src/repository/*).
-- DTO/Schemas — типи, Zod-схеми, мапінг DB DTO → View DTO (Backend/src/dto/*, Backend/src/schemas/*, dto.func.ts).
-- Errors — AppError, asyncHandler, globalErrorHandler з єдиним форматом помилки (Backend/src/errors/*).
-- DB — db.ts (створює/відкриває SQLite, PRAGMA foreign_keys=ON), dbClient.ts (all/get/run як проміси), migrate.ts (раннер спрощених міграцій), seed.ts (первинні дані) (Backend/src/db/*).
+Проект складається з двох частин — бекенд і фронтенд, які запускаються окремо.
 
-Патерн відповіді для списків: { data, total }
-- data — масив View DTO
-- total — загальна кількість записів, що відповідають фільтрам (Events — через окремий COUNT(*))
+### 1. Встановити залежності
 
-## 2) Database Architecture
-Файлова БД SQLite: Backend\src\data\app.db
+```bash
+# Бекенд
+cd Backend
+npm install
 
-Ключові таблиці, зв’язки та обмеження:
-- Users: UNIQUE(email), NOT NULL поля; роль за замовчуванням USER.
-- Events: UNIQUE(name), CHECK(capacity > 0 AND capacity < 200).
-- Registrations: UNIQUE(user_id, event_id), FK → Users/Events.
-- ON DELETE CASCADE: Users → Registrations; ON DELETE RESTRICT: Events → Registrations.
+# Фронтенд
+cd Frontend
+npm install
+```
 
+### 2. Налаштувати змінні середовища
 
-## 3) API Reference
-Усі спискові ендпоінти повертають { data, total }. Є централізований error handler з форматом:
-```json
+Створити файл `.env` в кореневій папці проекту:
+
+```env
+PORT=3000
+ACCESS_TOKEN_SECRET=your_access_secret_min_32_chars
+REFRESH_TOKEN_SECRET=your_refresh_secret_min_32_chars
+NODE_ENV=development
+```
+
+### 3. Запустити
+
+```bash
+# Термінал 1 — Бекенд
+cd Backend
+npm run dev
+
+# Термінал 2 — Фронтенд
+cd Frontend
+npm run start
+```
+
+- Бекенд: `http://localhost:3000`
+- Фронтенд: `http://localhost:8080`
+- Документація API (Swagger): `http://localhost:3000/api/docs`
+
+---
+
+## Архітектура
+
+```
+FIT_webapp/
+├── Backend/
+│   ├── src/
+│   │   ├── routes/         # Маршрути
+│   │   ├── controller/     # Контролери
+│   │   ├── service/        # Бізнес логіка
+│   │   ├── repository/     # SQL запити
+│   │   ├── middleware/     # auth, role, validation
+│   │   ├── errors/         # AppError, globalErrorHandler
+│   │   └── tokens/         # JWT генерація
+│   └── migrations/         # SQL міграції
+└── Frontend/
+    ├── pages/              # HTML сторінки
+    ├── src/
+    │   ├── api/            # fetch запити до API
+    │   ├── state/          # store, initialState
+    │   └── ui/             # рендер функції
+    └── css/
+```
+
+---
+
+## API Endpoints
+
+### Автентифікація
+
+| Метод | Шлях | Опис |
+|-------|------|------|
+| POST | `/api/v1/auth/register` | Реєстрація |
+| POST | `/api/v1/auth/login` | Логін |
+| POST | `/api/v1/auth/refresh` | Оновлення access token |
+| POST | `/api/v1/auth/logout` | Вихід |
+| GET | `/api/v1/auth/me` | Перевірка токена |
+
+### Події
+
+| Метод | Шлях | Доступ |
+|-------|------|--------|
+| GET | `/api/v1/events` | Всі |
+| GET | `/api/v1/events/:id` | Всі |
+| POST | `/api/v1/events` | ADMIN |
+| PUT | `/api/v1/events/:id` | ADMIN |
+| DELETE | `/api/v1/events/:id` | ADMIN |
+
+### Користувачі
+
+| Метод | Шлях | Доступ |
+|-------|------|--------|
+| GET | `/api/v1/users` | ADMIN |
+| GET | `/api/v1/users/:id` | ADMIN |
+| PATCH | `/api/v1/users/:id` | ADMIN |
+| DELETE | `/api/v1/users/:id` | ADMIN |
+
+### Реєстрації
+
+| Метод | Шлях | Доступ |
+|-------|------|--------|
+| GET | `/api/v1/registrations` | ADMIN |
+| POST | `/api/v1/registrations` | USER |
+| PATCH | `/api/v1/registrations/:id` | USER (свої) / ADMIN |
+| DELETE | `/api/v1/registrations/:id` | USER (свої) / ADMIN |
+
+---
+
+## Приклади запитів
+
+### Реєстрація користувача
+
+```http
+POST http://localhost:3000/api/v1/auth/register
+Content-Type: application/json
+
 {
-  "error": { "code": "NOT_FOUND", "message": "Route not found", "details": null }
+  "name": "Іван Петренко",
+  "email": "ivan@example.com",
+  "password": "password123"
 }
 ```
 
-- Events
-  - GET /api/events — список з фільтрацією/сортуванням/пагінацією
-    - Query: search?, sortBy? (number_sorter|name_sorter|capacity_sorter|date_sorter), limit?, offset?
-    - Відповідь 200 (json):
+### Логін
+
+```http
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "ivan@example.com",
+  "password": "password123"
+}
+```
+
+Відповідь:
 ```json
-{ "data": [ { "id": 1, "name": "JS Conf", "date": "2027-04-15T10:00:00.000Z", "location": "Kyiv", "capacity": 100, "description": "..." } ], "total": 37 }
-```
-  - GET /api/events/:id — 200 | 404
-  - POST /api/events — 201 (валідація createEventSchema)
-  - PATCH /api/events/:id — 200 | 400 | 404
-  - PUT /api/events/:id — 200 | 400 | 404
-  - DELETE /api/events/:id — 204 | 404
-  - GET /api/events/:id/registrations/count — 200 → { "count": number }
-
-- Users
-  - GET /api/users — 200 → { data, total }
-  - GET /api/users/:id — 200 | 404
-  - GET /api/users/:id/registrations — JOIN Registrations+Events, 200 → { data, total }
-  - POST /api/users — 201 (пароль хешується)
-  - PATCH /api/users/:id — 200 | 400 | 404
-  - PUT /api/users/:id — 200 | 400 | 404
-  - DELETE /api/users/:id — 204 | 404
-
-- Registrations
-  - GET /api/registrations — 200 → { data, total }
-  - GET /api/registrations/:id — 200 | 404
-  - POST /api/registrations — 201 | 404 | 409
-  - PATCH /api/registrations/:id — 200 | 400 | 404
-  - PUT /api/registrations/:id — 200 | 400 | 404
-  - DELETE /api/registrations/:id — 204 | 404
-
-Розділ «Security Research & Penetration Testing» — нижче.
-
-## 4) The SQL Injection Showcase (навмисна вразливість)
-У проєкті присутній спец-ендпоінт ТІЛЬКИ для демонстрації SQL Injection.
-
-- Endpoint: GET /api/events/unsafe/:id
-- Чому вразливий: будує SQL через конкатенацію рядків без плейсхолдерів (parameter binding відсутній), що дозволяє змінювати WHERE.
-
-Вразливий код (уривок):
-```ts
-const sql = `SELECT event_id, name, date, location, capacity, description
-             FROM Events
-             WHERE event_id = ${id}`; // НЕБЕЗПЕЧНО!
+{
+  "user": { "id": 1, "name": "Іван Петренко", "role": "USER" },
+  "accessToken": "eyJ..."
+}
 ```
 
-Payload для експлуатації (обхід фільтра, повертає всі рядки):
-```bash
-curl -i "http://localhost:3000/api/events/unsafe/1 OR 1=1"
-```
-Фактичний SQL:
-```sql
-SELECT event_id, name FROM Events WHERE event_id = 1 OR 1=1;
+### Захищений запит
+
+```http
+GET http://localhost:3000/api/v1/events
+Authorization: Bearer eyJ...
 ```
 
-Як ПОВИННО бути (безпечний, параметризований запит):
-```ts
-await get("SELECT event_id, name FROM Events WHERE event_id = ?", [Number(id)]);
+### Оновлення токена
+
+```http
+POST http://localhost:3000/api/v1/auth/refresh
+Cookie: refreshToken=eyJ...
 ```
-Або для LIKE-пошуку за назвою:
-```ts
-await all(
-  "SELECT event_id, name FROM Events WHERE LOWER(name) LIKE ? ORDER BY name ASC LIMIT ? OFFSET ?",
-  [ `%${search.toLowerCase()}%`, limit, offset ]
-);
-```
-
-У продакшені подібні ендпоінти мають бути відсутні. Цей — лише для навчальної демонстрації.
-
-- Security-тест (SQLi) — ручна перевірка:
-```bash
-# Звичайний запит (id=1)
-curl -i http://localhost:3000/api/events/unsafe/1
-
-# SQLi: поверне всі події
-curl -i "http://localhost:3000/api/events/unsafe/1 OR 1=1"
-```
-
-- Перевірка WHERE+ORDER+LIMIT (фільтри/сортування/пагінація):
-```bash
-curl -G http://localhost:3000/api/events \
-  --data-urlencode "search=js" \
-  --data-urlencode "sortBy=name_sorter" \
-  --data-urlencode "limit=5" \
-  --data-urlencode "offset=0"
-```
-
-## 6) Local Setup (міграції та сидування)
-Вимоги: Node.js 18+, npm
-
-1) Встановити залежності
-```bash
-cd Backend
-npm i
-
-
-2) Налаштувати порт (необов’язково)
-- Створіть .env і задайте PORT=3000 (або інший)
-
-3) Міграції (спрощений раннер)
-- SQL-файли зберігаються у Backend/src/migrations/
-- Запуск:
-```bash
-npm run migrate
-```
-Runner застосує лише нові файли та зафіксує версії у schema_migrations.
-
-4) Seed (первинні дані)
-```bash
-npm run seed
-```
-Seed очистить таблиці та додасть 3 Users, 3 Events, 4 Registrations (паролі — демо-хеш bcrypt).
-
-5) Запустити сервер у dev-режимі (tsx watch)
-```bash
-npm run dev
-```
-
-6) Шляхи та корисні посилання
-- Файл БД: Backend\src\data\app.db
-- Health: GET /health
-- Swagger UI: GET /api/docs
 
 ---
+
+## Безпека (Лабораторна №5)
+
+### Таблиця вразливостей
+
+| Вразливість | Наслідок | Виправлення |
+|-------------|----------|-------------|
+| SQL Injection | Витік або модифікація даних БД | Параметризовані запити (`?`) |
+| XSS | Виконання шкідливого JS в браузері | `escapeHtml()` + `textContent` |
+| IDOR | Доступ до чужих даних | Перевірка `userId` на бекенді |
+| Misconfiguration | Витік внутрішніх деталей, CORS атаки | Security headers + whitelist CORS |
+
+---
+
+### A. SQL Injection
+
+**До (вразливо):**
+```js
+const sql = `SELECT * FROM Events WHERE name LIKE '%${req.query.search}%'`;
+```
+
+**Після (виправлено):**
+```js
+const sql = `SELECT * FROM Events WHERE name LIKE ?`;
+db.all(sql, [`%${req.query.search}%`]);
+```
+
+**Перевірка:**
+```http
+GET /api/v1/events?search=' OR '1'='1
+# Повертає звичайний порожній результат, не всі записи
+```
+
+---
+
+### Б. XSS
+
+**До (вразливо):**
+```js
+tbody.innerHTML += `<td>${item.name}</td>`;
+```
+
+**Після (виправлено):**
+```js
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+// Використовується у всіх рендер функціях
+tbody.innerHTML += `<td>${escapeHtml(item.name)}</td>`;
+```
+
+**Перевірка:**
+```
+Ввести у поле назви: <script>alert('XSS')</script>
+До: виконується alert
+Після: відображається як текст
+```
+
+---
+
+### В. IDOR (Broken Access Control)
+
+**До (вразливо):**
+```js
+// Будь-який користувач міг змінити чужу реєстрацію
+app.patch('/registrations/:id', async (req, res) => {
+    await service.updateRegistration(req.params.id, req.body);
+});
+```
+
+**Після (виправлено):**
+```ts
+const userId = req.user.userId;
+const check = await service.getRegistrationById(params.id);
+
+if (!isAdmin && check.userId !== userId) {
+    return next(new AppError(403, 'FORBIDDEN', 'You can only cancel your own registrations'));
+}
+```
+
+**Перевірка:**
+```http
+# Спроба змінити чужу реєстрацію
+PATCH /api/v1/registrations/5
+Authorization: Bearer <токен іншого юзера>
+
+# Відповідь: 403 FORBIDDEN
+```
+
+---
+
+### Г. Security Misconfiguration
+
+**Безпечні HTTP заголовки:**
+```ts
+res.setHeader("X-Content-Type-Options", "nosniff");
+res.setHeader("X-Frame-Options", "DENY");
+res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+res.setHeader("X-XSS-Protection", "1; mode=block");
+res.setHeader("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
+```
+
+**CORS whitelist (не `*`):**
+```ts
+app.use(cors({
+    origin: ["http://127.0.0.1:8080", "http://localhost:8080"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+}));
+```
+
+**Помилки без dev-деталей у production:**
+```ts
+// Клієнт отримує:
+{
+  "error": {
+    "code": "INTERNAL_SERVER_ERROR",
+    "message": "Internal Server Error",
+    "details": null  // деталі тільки в dev режимі
+  }
+}
+```
+
+**Перевірка заголовків:**
+```bash
+curl -I http://localhost:3000/health
+# X-Content-Type-Options: nosniff
+# X-Frame-Options: DENY
+# Referrer-Policy: strict-origin-when-cross-origin
+```
+
+---
+
+## JWT Автентифікація
+
+### Схема токенів
+
+```
+Access Token  — 15 хвилин, передається в Authorization header
+Refresh Token — 7 днів, зберігається в httpOnly cookie
+```
+
+### Флоу
+
+```
+1. POST /auth/login → access token (JSON) + refresh token (cookie)
+2. GET /api/v1/events + Authorization: Bearer <access> → дані
+3. Access прострочився → POST /auth/refresh → новий access token
+4. POST /auth/logout → токени відкликані
+```
+
+### Ролі
+
+| Роль | Доступ |
+|------|--------|
+| `USER` | Читання подій, свої реєстрації |
+| `ADMIN` | Повний CRUD, всі реєстрації, управління юзерами |
+
+---
+
+## Формат помилок
+
+Всі помилки повертаються в єдиному форматі:
+
+```json
+{
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "User not found",
+    "details": null
+  }
+}
+```
+
+| Код | Статус | Опис |
+|-----|--------|------|
+| `UNAUTHORIZED` | 401 | Токен відсутній |
+| `TOKEN_EXPIRED` | 401 | Токен прострочений |
+| `FORBIDDEN` | 403 | Немає доступу |
+| `NOT_FOUND` | 404 | Ресурс не знайдено |
+| `CONFLICT` | 409 | Дублікат (email вже існує) |
+| `BAD_REQUEST` | 400 | Невалідні дані |
