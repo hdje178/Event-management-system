@@ -26,7 +26,12 @@ if (!user) {
 isAuthReady = true;
 document.body.classList.remove("not-ready");
 bindMyRegistrationsEvents(store);
-
-await store.loadEvents();
 const isAdmin = user.role.toLowerCase() === 'admin';
-await (isAdmin ? store.loadAllRegistrations() : store.loadMyRegistrations());
+if (isAdmin){
+    await store.loadUsers();
+    await store.loadAllRegistrations()
+}else{
+    await store.loadMyRegistrations();
+}
+await store.loadEvents();
+

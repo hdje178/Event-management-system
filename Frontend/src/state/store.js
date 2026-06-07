@@ -208,6 +208,7 @@ export function createStore() {
                     return;
                 }
                 store.setState({ users: { ...state.users, list: res.data?.data ?? res.data ?? [], isLoading: false } });
+                console.log("users:", res.data?.data ?? res.data ?? [])
             } catch (e) {
                 if (e?.name !== 'AbortError') {
                     store.setState({ users: { ...state.users, screenError: "Unexpected error", isLoading: false } });
@@ -285,6 +286,7 @@ export function createStore() {
                 }
                 const items = res.data?.data ?? res.data ?? [];
                 store.setState({ registrations: { ...state.registrations, list: items, isLoading: false } });
+                console.log("allRegs:", items)
             } catch (e) {
                 if (e?.name !== 'AbortError') {
                     store.setState({ registrations: { ...state.registrations, screenError: "Unexpected error", isLoading: false } });
@@ -767,8 +769,6 @@ export function createStore() {
             listeners.push(fn);
         }
     }
-    window.store = store;
-
     return store;
 }
 

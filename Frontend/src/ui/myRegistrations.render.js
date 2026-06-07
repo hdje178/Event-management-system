@@ -19,6 +19,8 @@ function renderRegistrationsTable(state) {
             <th>Назва події</th>
             <th>Дата події</th>
             <th>Локація</th>
+            <th>Ім'я користувача</th>
+            <th>Email</th> 
             <th>Статус</th>
             <th>Скасувати</th>
         </tr>`;
@@ -34,12 +36,17 @@ function renderRegistrationsTable(state) {
         const eventName = event?.name ?? '—';
         const eventDate = event ? new Date(event.date).toLocaleDateString('uk-UA') : '—';
         const eventLocation = event?.location ?? '—';
+        const user = state.users.list.find(u => u.id === item.userId);
+        const userName = user?.name ?? "—";
+        const userEmail = user?.email ?? "—" ;
 
         return `<tr data-id="${item.id}">
             <td>${index + 1}</td>
             <td>${eventName}</td>
             <td>${eventDate}</td>
             <td>${eventLocation}</td>
+            <td>${userName}</td>
+            <td>${userEmail}</td>
             <td>${item.status ?? '—'}</td>
             <td><button class="cancel-btn" data-id="${item.id}">Скасувати</button></td>
         </tr>`;
