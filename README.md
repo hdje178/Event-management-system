@@ -80,7 +80,7 @@ FIT_webapp/
 
 | Метод | Шлях | Опис |
 |-------|------|------|
-| POST | `/api/v1/auth/registrations` | Реєстрація |
+| POST | `/api/v1/auth/registration` | Реєстрація |
 | POST | `/api/v1/auth/login` | Логін |
 | POST | `/api/v1/auth/refresh` | Оновлення access token |
 | POST | `/api/v1/auth/logout` | Вихід |
