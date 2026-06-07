@@ -80,7 +80,7 @@ FIT_webapp/
 
 | Метод | Шлях | Опис |
 |-------|------|------|
-| POST | `/api/v1/auth/register` | Реєстрація |
+| POST | `/api/v1/auth/registration` | Реєстрація |
 | POST | `/api/v1/auth/login` | Логін |
 | POST | `/api/v1/auth/refresh` | Оновлення access token |
 | POST | `/api/v1/auth/logout` | Вихід |
@@ -350,7 +350,7 @@ Refresh Token — 7 днів, зберігається в httpOnly cookie
 |-----|--------|------|
 | `UNAUTHORIZED` | 401 | Токен відсутній |
 | `TOKEN_EXPIRED` | 401 | Токен прострочений |
-| `FORBIDDEN` | 403 | Немає доступу |
+| `FORBIDDEN` | 403 | Немає доступу|
 | `NOT_FOUND` | 404 | Ресурс не знайдено |
 | `CONFLICT` | 409 | Дублікат (email вже існує) |
 | `BAD_REQUEST` | 400 | Невалідні дані |
