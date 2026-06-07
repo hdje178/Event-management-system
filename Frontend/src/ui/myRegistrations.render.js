@@ -5,6 +5,15 @@ export function renderMyRegistrationsApp(state){
     renderHeader(state);
     renderWelcome(state);
 }
+function escapeHtml(str) {
+    if (str === null || str === undefined) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 function renderRegistrationsTable(state) {
     const tbody = document.querySelector(".register_table_body");
     const thead = document.querySelector(".register_table_head");
@@ -26,7 +35,7 @@ function renderRegistrationsTable(state) {
     }
 
     if (!items.length) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center">Реєстрацій ще немає</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="100" style="text-align:center">Реєстрацій ще немає</td></tr>`;
         return;
     }
 
@@ -41,12 +50,12 @@ function renderRegistrationsTable(state) {
 
         return `<tr data-id="${item.id}">
             <td>${index + 1}</td>
-            <td>${eventName}</td>
-            <td>${eventDate}</td>
-            <td>${eventLocation}</td>
-            <td>${userName}</td>
-            <td>${userEmail}</td>
-            <td>${item.status ?? '—'}</td>
+            <td>${escapeHtml(eventName)}</td>
+            <td>${escapeHtml(eventDate)}</td>
+            <td>${escapeHtml(eventLocation)}</td>
+            <td>${escapeHtml(userName)}</td>
+            <td>${escapeHtml(userEmail)}</td>
+            <td>${escapeHtml(item.status ?? '—')}</td>
             <td><button class="cancel-btn" data-id="${item.id}">Скасувати</button></td>
         </tr>`;
     }).join('');

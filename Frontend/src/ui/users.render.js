@@ -8,6 +8,16 @@ function renderUsersApp(state) {
 
 export { renderUsersApp };
 
+function escapeHtml(str) {
+    if (str === null || str === undefined) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function renderUsersTable(state){
     const tbody = document.querySelector(".register_table_body");
     tbody.innerHTML = "";
@@ -19,9 +29,9 @@ function renderUsersTable(state){
         return `
       <tr data-id="${item.id}">
         <td data-id="${item.id}">${index+1}</td>
-        <td data-id="${item.id}" ${isEditing? 'contenteditable="true"' : ""}>${isEditing ? v.name : item.name}</td>
-        <td data-id="${item.id}" ${isEditing? 'contenteditable="true"' : ""}>${isEditing ? v.email : item.email}</td>
-        <td data-id="${item.id}">${item.role}</td>
+        <td data-id="${item.id}" ${isEditing? 'contenteditable="true"' : ""}>${escapeHtml(isEditing ? v.name : item.name)}</td>
+        <td data-id="${item.id}" ${isEditing? 'contenteditable="true"' : ""}>${escapeHtml(isEditing ? v.email : item.email)}</td>
+        <td data-id="${item.id}">${escapeHtml(item.role)}</td>
         <td data-id="${item.id}"><button type="button" class="delete-btn" data-id="${item.id}">Видалити</button></td>
         <td data-id="${item.id}"><button type="button" ${isEditing? 'class="save-btn"' : 'class="edit-btn"'} data-id="${item.id}">${isEditing? "Зберегти" : "Редагувати"}</button></td>
       </tr>`
