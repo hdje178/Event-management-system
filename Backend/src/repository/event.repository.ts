@@ -35,8 +35,6 @@ export async function getEvents(query: QueryEventDto): Promise<Paginated<EventIt
             orderByCondition = "ORDER BY date ASC";
         }
     }
-    const deleteExpiredEvents = `DELETE FROM events WHERE date(date) < date('now')`
-    await run(deleteExpiredEvents);
     const countSql = `SELECT COUNT(*) AS cnt FROM events WHERE ${whereCondition}`;
     const countResult = await get<any>(countSql, values);
     orderByCondition += " LIMIT ? OFFSET ?";
@@ -53,7 +51,8 @@ export async function getEvents(query: QueryEventDto): Promise<Paginated<EventIt
 export async function getEventById(
   id: number,
 ): Promise<EventItemsDto | null> {
-  const event = await get<EventDbDto>("SELECT event_id, name, date , location , capacity, description, created_at, updated_at FROM events WHERE event_id=?", [id]);
+  const event = await get<EventDbDto>("SELECT event_id, name, date , location , capacity, description, created_at," +
+      " updated_at FROM events WHERE event_id=?", [id]);
   if (!event) {
       return null;
   }

@@ -6,22 +6,9 @@ export function bindEventsUsers(store) {
         if (document.scrollingElement) return document.scrollingElement;
         return document.compatMode === 'CSS1Compat' ? document.documentElement : document.body;
     }
-    // searchContainer.addEventListener("click", function (event) {
-    //     const target = event.target;
-    //     let input = document.querySelector("#input_for_search");
-    //
-    //     if (target.id === "button_for_search") {
-    //         store.setFilterText(input.value.trim());
-    //     }
-    //
-    //     if (target.id === "button_for_reset") {
-    //         store.resetSearch();
-    //         input.value = "";
-    //     }
-    // });
     const input = document.querySelectorAll("#register-form input, #register-form textarea");
     input.forEach(el => {
-        el.addEventListener("blur", (event) => {
+        el.addEventListener("input", (event) => {
             let value = event.target.value.trim();
             store.updateFieldUsers(event.target.name, value )
         })

@@ -22,7 +22,7 @@ export function bindEventsEvents(store) {
     });
     const input = document.querySelectorAll("#register-form input, #register-form textarea");
     input.forEach(el => {
-        el.addEventListener("blur", (event) => {
+        el.addEventListener("input", (event) => {
             let value = event.target.value.trim();
             if (event.target.name === "description" && value === ""){
                 value = "-"
