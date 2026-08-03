@@ -17,7 +17,7 @@ import {authMiddleware} from "./middleware/auth.middleware.js";
 
 
 const app: Express = express();
-const PORT: number = Number(process.env.PORT) || 3000;
+const PORT: number = Number(process.env.PORT) || 5000;
 app.use(cookieParser());
 app.use(cors({
     origin: ["http://127.0.0.1:8080","http://localhost:8080"],
@@ -70,10 +70,15 @@ app.use((req, res) => {
     });
 });
 app.use(globalErrorHandler);
+console.log("About to listen on", PORT);
 async function startServer() {
     try {
-        app.listen(PORT, () => {
+        const server = app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);
+            console.log("Address:", server.address());
+        });
+        server.on("error", (err) => {
+            console.error("LISTEN ERROR:", err);
         });
     } catch (err) {
         console.error("Failed to start server:", err);

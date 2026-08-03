@@ -6,6 +6,8 @@
     "target": "esnext",
     "lib": ["esnext", "dom"],
     "strict": true,
+    "allowJs": true,
+    "moduleResolution": "bundler",
     "sourceMap": true,
     "skipLibCheck": true,
     "moduleDetection": "force",
