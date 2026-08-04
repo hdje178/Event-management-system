@@ -25,7 +25,7 @@ npm install
 Створити файл `.env` в кореневій папці проекту:
 
 ```env
-PORT=3000
+PORT=5000
 ACCESS_TOKEN_SECRET=your_access_secret_min_32_chars
 REFRESH_TOKEN_SECRET=your_refresh_secret_min_32_chars
 NODE_ENV=development
@@ -43,9 +43,9 @@ cd Frontend
 npm run start
 ```
 
-- Бекенд: `http://localhost:3000`
+- Бекенд: `http://localhost:5000`
 - Фронтенд: `http://localhost:8080`
-- Документація API (Swagger): `http://localhost:3000/api/docs`
+- Документація API (Swagger): `http://localhost:5000/api/docs`
 
 ---
 
@@ -121,7 +121,7 @@ FIT_webapp/
 ### Реєстрація користувача
 
 ```http
-POST http://localhost:3000/api/v1/auth/register
+POST http://localhost:5000/api/v1/auth/register
 Content-Type: application/json
 
 {
@@ -134,7 +134,7 @@ Content-Type: application/json
 ### Логін
 
 ```http
-POST http://localhost:3000/api/v1/auth/login
+POST http://localhost:5000/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -154,14 +154,14 @@ Content-Type: application/json
 ### Захищений запит
 
 ```http
-GET http://localhost:3000/api/v1/events
+GET http://localhost:5000/api/v1/events
 Authorization: Bearer eyJ...
 ```
 
 ### Оновлення токена
 
 ```http
-POST http://localhost:3000/api/v1/auth/refresh
+POST http://localhost:5000/api/v1/auth/refresh
 Cookie: refreshToken=eyJ...
 ```
 
