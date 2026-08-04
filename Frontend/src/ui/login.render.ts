@@ -2,6 +2,13 @@ import type { AppState } from "../state/initialState.js";
 
 export function renderLoginApp(state: AppState) {
   renderLoginFormErrors(state);
+  renderHeader();
+}
+function renderHeader(){
+    const header = document.querySelector("header") as HTMLElement;
+    requestAnimationFrame(() => {
+        (header.querySelector("nav") as HTMLElement).classList.add("visible");
+    });
 }
 
 function renderLoginFormErrors(state: AppState) {

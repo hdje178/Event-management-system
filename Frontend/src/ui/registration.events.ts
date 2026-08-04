@@ -1,4 +1,6 @@
-export function bindEventsRegistration(store: any) {
+import {createStore} from "../state/store";
+
+export function bindEventsRegistration(store: ReturnType<typeof createStore>) {
   const input = document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
     "#register-form input, #register-form textarea",
   );

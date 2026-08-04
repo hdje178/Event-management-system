@@ -1,4 +1,6 @@
-export function bindMyRegistrationsEvents(store: any) {
+import {createStore} from "../state/store";
+
+export function bindMyRegistrationsEvents(store: ReturnType<typeof createStore>) {
   (document.querySelector("header") as HTMLElement).addEventListener("click", async (e: Event) => {
     const t = e.target as HTMLElement;
     if (t.id === "logout") await store.logout();

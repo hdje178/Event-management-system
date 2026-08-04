@@ -2,8 +2,15 @@ import type { AppState } from "../state/initialState.js";
 
 export function renderRegistrationApp(state: AppState) {
   renderRegistrationFormErrors(state);
+  renderHeader();
 }
 
+function renderHeader(){
+    const header = document.querySelector("header") as HTMLElement;
+    requestAnimationFrame(() => {
+        (header.querySelector("nav") as HTMLElement).classList.add("visible");
+    });
+}
 function renderRegistrationFormErrors(state: AppState) {
   const fields = ["name", "email", "password"] as const;
   const submit_btn = document.querySelector(

@@ -1,6 +1,7 @@
 import { toYMD } from "../utils/utils.js";
+import {createStore} from "../state/store.js";
 
-export function bindEventsEvents(store: any) {
+export function bindEventsEvents(store: ReturnType<typeof createStore>) {
   const searchContainer = document.querySelector(".search_for_element") as HTMLElement;
   function getDocumentScroller() {
     if (document.scrollingElement) return document.scrollingElement as HTMLElement;
@@ -51,18 +52,21 @@ export function bindEventsEvents(store: any) {
     }
 
     if (target.classList.contains("save-btn")) {
-      const row = (target as HTMLElement).closest("tr") as HTMLTableRowElement | null;
+    const row = (target as HTMLElement).closest("tr") as HTMLTableRowElement | null;
 
-      const id = Number((target as HTMLElement).dataset.id);
-      const state = store.getState().events.ui.editValues as { date: string } & Record<string, any>;
-      let YMD = toYMD(state.date);
-      if (!YMD) YMD = "";
-      const payload = {
-        ...state,
+    const id = Number((target as HTMLElement).dataset.id);
+    const editValues = store.getState().events.ui.editValues;
+    if (!editValues) return;
+
+    let YMD = toYMD(editValues.date);
+    if (!YMD) YMD = "";
+    const payload = {
+        ...editValues,
         date: YMD,
-      };
+    };
 
-      store.saveEvents(id, payload);
+    await store.saveEvents(id, payload);
+
     }
     const regBtn = (target as HTMLElement).closest('.userRegistrations-btn') as HTMLButtonElement | null;
     if (regBtn) {

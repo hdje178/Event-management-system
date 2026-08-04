@@ -41,7 +41,7 @@ export type EditErrors<TFields extends string> = Record<TFields, boolean>;
 
 export type UsersUiState = {
   editErrors: EditErrors<"name" | "email">;
-  editValues: { name: string; email: string; password: string } | null;
+  editValues: { name: string; email: string;} | null;
   filterText: string;
   filterItems: UserResponseDto[];
   editingId: number | null;

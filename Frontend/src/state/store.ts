@@ -542,8 +542,6 @@ export function createStore() {
       state.users.ui.editValues = {
         name: item.name,
         email: item.email,
-        // password не повертається з бекенду — залишаємо порожнім рядком
-        password: "",
       };
       listeners.forEach((fn) => fn(state));
     },

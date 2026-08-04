@@ -1,4 +1,6 @@
-export function bindEventsUsers(store: any) {
+import {createStore} from "../state/store";
+//
+export function bindEventsUsers(store: ReturnType<typeof createStore>) {
   const searchContainer = document.querySelector(".search_for_element") as HTMLElement | null;
   function getDocumentScroller(): HTMLElement {
     if (document.scrollingElement) return document.scrollingElement as HTMLElement;
