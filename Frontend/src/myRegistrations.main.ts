@@ -6,27 +6,29 @@ import { renderMyRegistrationsApp } from "./ui/myRegistrations.render.js";
 const store = createStore();
 let isAuthReady = false;
 
-store.subscribe((state) => saveToLocalStorage(state as any));
+store.subscribe((state) => saveToLocalStorage(state));
 store.subscribe((state) => {
   const scrollY = window.scrollY;
   if (state.auth.isLoading) return;
   if (!isAuthReady) return;
-  renderMyRegistrationsApp(state as any);
+  renderMyRegistrationsApp(state);
   window.scrollTo(0, scrollY);
 });
 
 const res = await store.checkAuth();
-const user = store.getState().auth.user as any;
+const user = store.getState().auth.user;
 
 if (!user) {
   document.body.classList.add("not-ready");
   window.location.replace('/pages/login.html?redirect=/pages/myRegistrations.html');
+  // Якщо користувач не авторизований — далі не продовжуємо
+  return;
 }
 
 isAuthReady = true;
 document.body.classList.remove("not-ready");
-bindMyRegistrationsEvents(store as any);
-const isAdmin = (user as any).role.toLowerCase() === 'admin';
+bindMyRegistrationsEvents(store);
+const isAdmin = user.role.toLowerCase() === 'admin';
 if (isAdmin) {
   await store.loadUsers();
   await store.loadAllRegistrations();

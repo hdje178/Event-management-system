@@ -20,8 +20,8 @@ function escapeHtml(str: unknown) {
 function renderRegistrationsTable(state: AppState) {
   const tbody = document.querySelector(".register_table_body") as HTMLElement;
   const thead = document.querySelector(".register_table_head") as HTMLElement;
-  const items = state.registration.list as any[];
-  const events = state.events.list as any[];
+  const items = state.registration.list;
+  const events = state.events.list;
 
   if (state.auth.user) {
     thead.innerHTML = `<tr>
@@ -42,12 +42,12 @@ function renderRegistrationsTable(state: AppState) {
   }
 
   tbody.innerHTML = items
-    .map((item: any, index: number) => {
-      const event = events.find((e) => e.id === item.eventId);
+    .map((item, index: number) => {
+      const event = events.find((e) => String(e.id) === item.eventId);
       const eventName = event?.name ?? "—";
       const eventDate = event ? new Date(event.date).toLocaleDateString("uk-UA") : "—";
       const eventLocation = event?.location ?? "—";
-      const user = state.users.list.find((u) => u.id === item.userId) as any;
+      const user = state.users.list.find((u) => String(u.id) === item.userId);
       const userName = user?.name ?? "—";
       const userEmail = user?.email ?? "—";
 

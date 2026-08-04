@@ -2,15 +2,15 @@ import type { AppState } from "../state/initialState.js";
 
 function renderEventsApp(state: AppState) {
   renderEventsTable(state);
-  renderEventsTableErrors(state.events as any);
-  renderEventsFormErrors(state.events as any);
+  renderEventsTableErrors(state.events.ui);
+  renderEventsFormErrors(state.events);
   renderEventsForm(state);
   renderHeader(state);
   renderWelcome(state);
   renderEventsThead(state);
   console.log("renderEventsApp");
 }
-let lastAuthUser: unknown = undefined;
+let lastAuthUser: AppState["auth"]["user"] | undefined = undefined;
 
 export { renderEventsApp };
 
@@ -34,14 +34,14 @@ function renderEventsTable(state: AppState) {
   const rowHtml = events
     .map((item, index) => {
       const isEditing = state.events.ui.editingId === item.id;
-      const v = isEditing && state.events.ui.editValues ? state.events.ui.editValues : null as any;
+      const v = state.events.ui.editValues;
 
-      const nameVal = isEditing ? (v as any).name : item.name;
-      const locationVal = isEditing ? (v as any).location : item.location;
-      const capacityVal = isEditing ? (v as any).capacity : item.capacity;
-      const descriptionVal = isEditing ? (v as any).description : item.description;
+      const nameVal = isEditing && v ? v.name : item.name;
+      const locationVal = isEditing && v ? v.location : item.location;
+      const capacityVal = isEditing && v ? v.capacity : item.capacity;
+      const descriptionVal = isEditing && v ? v.description : item.description;
 
-      const dateVal = isEditing ? (v as any).date : new Date(item.date).toLocaleDateString("uk-UA");
+      const dateVal = isEditing && v ? v.date : new Date(item.date).toLocaleDateString("uk-UA");
 
       if (state.auth.user) {
         if (state.auth.user.role.toLowerCase() === "admin") {
@@ -59,7 +59,7 @@ function renderEventsTable(state: AppState) {
           }</button></td>
       </tr>`;
         } else {
-          const isRegistered = state.registration.list.some((r) => (r as any).eventId === item.id);
+          const isRegistered = state.registration.list.some((r) => r.eventId === String(item.id));
           return `
       <tr data-id="${item.id}">
         <td data-id="${item.id}">${index + 1}</td>
@@ -93,7 +93,7 @@ export function renderHeader(state: AppState) {
   if (lastAuthUser === state.auth.user) {
     return;
   }
-  lastAuthUser = state.auth.user as any;
+  lastAuthUser = state.auth.user;
   const header = document.querySelector("header") as HTMLElement;
   if (state.auth.user) {
     if (state.auth.user.role.toLowerCase() === "admin") {
@@ -145,7 +145,7 @@ export function renderWelcome(state: AppState) {
       welcome.style.marginBottom = "20px";
       welcome.style.fontSize = "1.2em";
     }
-    (welcome as HTMLElement).textContent = `Вітаємо, ${state.auth.userInfo?.name || "користувачу"}!`;
+    welcome.textContent = `Вітаємо, ${state.auth.userInfo?.name || "користувачу"}!`;
   } else {
     if (welcome) welcome.remove();
   }
@@ -198,7 +198,7 @@ function renderEventsForm(state: AppState) {
         const fields = ["name", "date", "location", "capacity", "description"] as const;
         fields.forEach((field) => {
           const input = document.getElementById(`register-form_${field}`) as HTMLInputElement | HTMLTextAreaElement | null;
-          if (input) (input as HTMLInputElement | HTMLTextAreaElement).value = "" as any;
+          if (input) input.value = "";
         });
       }
     } else {
@@ -215,7 +215,7 @@ function renderEventsFormErrors(state: AppState["events"]) {
   fields.forEach((field) => {
     const el = document.getElementById(`${field}_error`) as HTMLElement;
     const input = document.getElementById(`register-form_${field}`) as HTMLInputElement | HTMLTextAreaElement;
-    const message = (state.form.touched as any)[`${field}`] ? ((state.form.errors as any)[field] ?? "") : "";
+    const message = state.form.touched[field] ? (state.form.errors[field] ?? "") : "";
     el.textContent = message;
     message ? input.classList.add("invalid") : input.classList.remove("invalid");
     if (message) {
@@ -236,7 +236,7 @@ function renderEventsTableErrors(state: AppState["events"]["ui"]) {
   if (!cellsEditing.length) return;
   fields.forEach((field, index) => {
     const el = cellsEditing[index];
-    if ((state.editErrors as any)[field] === false) {
+    if (state.editErrors[field] === false) {
       el.classList.add("error-cell");
     } else {
       el.classList.remove("error-cell");

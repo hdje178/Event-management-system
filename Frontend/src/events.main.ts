@@ -4,19 +4,19 @@ import { bindEventsEvents } from "./ui/events.events.js";
 import { renderEventsApp } from "./ui/events.render.js";
 
 const store = createStore();
-store.subscribe((state) => saveToLocalStorage(state as any));
+store.subscribe((state) => saveToLocalStorage(state));
 store.subscribe((state) => {
   const scrollY = window.scrollY;
   if (state.auth.isLoading) return;
-  renderEventsApp(state as any);
+  renderEventsApp(state);
   window.scrollTo(0, scrollY);
 });
 const res = await store.checkAuth();
-const user = store.getState().auth.user as any;
+const user = store.getState().auth.user;
 console.log("CheckAuth", res);
 console.log("auth", store.getState().auth.user);
 
-bindEventsEvents(store as any);
+bindEventsEvents(store);
 store.loadEvents();
 
 if (user && user.role.toLowerCase() !== 'admin') {

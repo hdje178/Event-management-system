@@ -6,15 +6,15 @@ const store = createStore();
 
 store.subscribe((state) => {
   if (state.auth.isLoading) return;
-  renderRegistrationApp(state as any);
+  renderRegistrationApp(state);
 });
 
 const res = await store.checkAuth();
 console.log("checkAuth result", res);
 console.log("auth state", store.getState().auth);
 
-if ((res as any).ok) {
+if (res && res.ok) {
   window.location.replace('/pages/events.html');
 }
 
-bindEventsRegistration(store as any);
+bindEventsRegistration(store);

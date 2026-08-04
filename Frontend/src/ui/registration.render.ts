@@ -12,8 +12,8 @@ function renderRegistrationFormErrors(state: AppState) {
   fields.forEach((field) => {
     const el = document.getElementById(`${field}_error`) as HTMLElement;
     const input = document.getElementById(`register-form_${field}`) as HTMLInputElement;
-    const message = (state.userRegistrations.form.touched as any)[`${field}`]
-      ? ((state.userRegistrations.form.errors as any)[field] ?? "")
+    const message = state.userRegistrations.form.touched[field]
+      ? (state.userRegistrations.form.errors[field] ?? "")
       : "";
     el.textContent = message;
     message ? input.classList.add("invalid") : input.classList.remove("invalid");
@@ -26,6 +26,6 @@ function renderRegistrationFormErrors(state: AppState) {
   submit_btn.disabled = !state.userRegistrations.form.isValid;
   const generalError = document.getElementById("general_error") as HTMLElement | null;
   if (generalError) {
-    generalError.textContent = (state.userRegistrations.form as any).generalError ?? "";
+    generalError.textContent = state.userRegistrations.form.generalError ?? "";
   }
 }

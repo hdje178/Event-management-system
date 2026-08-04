@@ -12,8 +12,8 @@ function renderLoginFormErrors(state: AppState) {
   fields.forEach((field) => {
     const el = document.getElementById(`${field}_error`) as HTMLElement;
     const input = document.getElementById(`register-form_${field}`) as HTMLInputElement;
-    const message = (state.login.form.touched as any)[`${field}`]
-      ? ((state.login.form.errors as any)[field] ?? "")
+    const message = state.login.form.touched[field]
+      ? (state.login.form.errors[field] ?? "")
       : "";
     el.textContent = message;
     message ? input.classList.add("invalid") : input.classList.remove("invalid");

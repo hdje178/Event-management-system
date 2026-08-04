@@ -1,10 +1,10 @@
 import type { AppState } from "../state/initialState.js";
 
 function renderUsersApp(state: AppState) {
-  renderUsersTable(state.users as any);
-  renderUsersTableErrors(state.users as any);
-  renderUsersFormErrors(state.users as any);
-  renderUsersForm(state.users as any);
+  renderUsersTable(state.users);
+  renderUsersTableErrors(state.users.ui);
+  renderUsersFormErrors(state.users);
+  renderUsersForm(state.users);
   console.log("renderEventsApp");
 }
 
@@ -28,13 +28,13 @@ function renderUsersTable(state: AppState["users"]) {
   const rowHtml = events
     .map((item, index) => {
       const isEditing = state.ui.editingId === item.id;
-      const v = isEditing && state.ui.editValues ? (state.ui.editValues as any) : null;
+      const v = state.ui.editValues;
       return `
       <tr data-id="${item.id}">
         <td data-id="${item.id}">${index + 1}</td>
-        <td data-id="${item.id}" ${isEditing ? 'contenteditable="true"' : ""}>${escapeHtml(isEditing ? (v as any).name : item.name)}</td>
-        <td data-id="${item.id}" ${isEditing ? 'contenteditable="true"' : ""}>${escapeHtml(isEditing ? (v as any).email : item.email)}</td>
-        <td data-id="${item.id}">${escapeHtml((item as any).role)}</td>
+        <td data-id="${item.id}" ${isEditing ? 'contenteditable="true"' : ""}>${escapeHtml(isEditing && v ? v.name : item.name)}</td>
+        <td data-id="${item.id}" ${isEditing ? 'contenteditable="true"' : ""}>${escapeHtml(isEditing && v ? v.email : item.email)}</td>
+        <td data-id="${item.id}">${escapeHtml(item.role)}</td>
         <td data-id="${item.id}"><button type="button" class="delete-btn" data-id="${item.id}">Видалити</button></td>
         <td data-id="${item.id}"><button type="button" ${isEditing ? 'class="save-btn"' : 'class="edit-btn"'} data-id="${item.id}">${
           isEditing ? "Зберегти" : "Редагувати"
@@ -65,7 +65,7 @@ function renderUsersFormErrors(state: AppState["users"]) {
   fields.forEach((field) => {
     const el = document.getElementById(`${field}_error`) as HTMLElement;
     const input = document.getElementById(`register-form_${field}`) as HTMLInputElement;
-    const message = (state.form.touched as any)[`${field}`] ? ((state.form.errors as any)[field] ?? "") : "";
+    const message = state.form.touched[field] ? (state.form.errors[field] ?? "") : "";
     el.textContent = message;
     message ? input.classList.add("invalid") : input.classList.remove("invalid");
     if (message) {
@@ -86,7 +86,7 @@ function renderUsersTableErrors(state: AppState["users"]["ui"]) {
   if (!cellsEditing.length) return;
   fields.forEach((field, index) => {
     const el = cellsEditing[index];
-    if ((state.editErrors as any)[field] === false) {
+    if (state.editErrors[field] === false) {
       el.classList.add("error-cell");
     } else {
       el.classList.remove("error-cell");

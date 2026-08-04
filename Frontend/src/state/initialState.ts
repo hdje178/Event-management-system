@@ -10,7 +10,7 @@ export type EventsFormValues = {
   name: string;
   date: string; // yyyy-MM-dd from UI
   location: string;
-  capacity: string; // kept as string in UI; coerced to number on submit
+  capacity: string;
   description: string;
 };
 
@@ -21,7 +21,7 @@ export type UsersFormValues = {
 };
 
 export type LoginFormValues = {
-  name: string; // preserved from original state
+  name: string;
   email: string;
   password: string;
 };
@@ -86,12 +86,12 @@ export interface UsersSlice extends SliceBase<UserResponseDto> {
 }
 
 export interface LoginSlice extends SliceBase<unknown> {
-  ui: UsersUiState; // reuse shape for simplicity (not used for login table)
+  ui: UsersUiState;
   form: FormState<LoginFormValues>;
 }
 
 export interface UserRegistrationsSlice extends SliceBase<unknown> {
-  ui: UsersUiState; // same UI shape for edit highlighting
+  ui: UsersUiState;
   form: FormState<RegistrationFormValues>;
 }
 
@@ -120,7 +120,6 @@ export const initialState: AppState = {
     isSubmitting: false,
     isEmpty: false,
     screenError: null,
-    // Початково всі поля вважаємо валідними (true)
     ui: {
       editErrors: {
         name: true,
@@ -185,7 +184,6 @@ export const initialState: AppState = {
     isEmpty: false,
     screenError: null,
     ui: {
-      // UI-форма логіну не використовує editErrors у таблиці, але тип той самий
       editErrors: {
         name: true,
         email: true,
