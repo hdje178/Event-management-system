@@ -36,7 +36,8 @@ export type FormState<TValues> = {
   generalError: string | null;
 };
 
-export type EditErrors<TFields extends string> = Record<TFields, boolean> & Record<string, boolean>;
+// Проста форма помилок для редагування таблиць: ключі тільки з відомого списку
+export type EditErrors<TFields extends string> = Record<TFields, boolean>;
 
 export type UsersUiState = {
   editErrors: EditErrors<"name" | "email">;
@@ -119,7 +120,21 @@ export const initialState: AppState = {
     isSubmitting: false,
     isEmpty: false,
     screenError: null,
-    ui: { editErrors: {} as EventsUiState["editErrors"], editValues: null, filterText: "", filterItems: [], editingId: null, sorter: "number_sorter" },
+    // Початково всі поля вважаємо валідними (true)
+    ui: {
+      editErrors: {
+        name: true,
+        date: true,
+        location: true,
+        capacity: true,
+        description: true,
+      },
+      editValues: null,
+      filterText: "",
+      filterItems: [],
+      editingId: null,
+      sorter: "number_sorter",
+    },
     form: {
       values: {
         name: "",
@@ -140,7 +155,17 @@ export const initialState: AppState = {
     isSubmitting: false,
     isEmpty: false,
     screenError: null,
-    ui: { editErrors: {} as UsersUiState["editErrors"], editValues: null, filterText: "", filterItems: [], editingId: null, sorter: "number_sorter" },
+    ui: {
+      editErrors: {
+        name: true,
+        email: true,
+      },
+      editValues: null,
+      filterText: "",
+      filterItems: [],
+      editingId: null,
+      sorter: "number_sorter",
+    },
     form: {
       values: {
         name: "",
@@ -159,7 +184,18 @@ export const initialState: AppState = {
     isSubmitting: false,
     isEmpty: false,
     screenError: null,
-    ui: { editErrors: {} as UsersUiState["editErrors"], editValues: null, filterText: "", filterItems: [], editingId: null, sorter: "number_sorter" },
+    ui: {
+      // UI-форма логіну не використовує editErrors у таблиці, але тип той самий
+      editErrors: {
+        name: true,
+        email: true,
+      },
+      editValues: null,
+      filterText: "",
+      filterItems: [],
+      editingId: null,
+      sorter: "number_sorter",
+    },
     form: {
       values: {
         name: "",
@@ -185,7 +221,17 @@ export const initialState: AppState = {
     isSubmitting: false,
     isEmpty: false,
     screenError: null,
-    ui: { editErrors: {} as UsersUiState["editErrors"], editValues: null, filterText: "", filterItems: [], editingId: null, sorter: "number_sorter" },
+    ui: {
+      editErrors: {
+        name: true,
+        email: true,
+      },
+      editValues: null,
+      filterText: "",
+      filterItems: [],
+      editingId: null,
+      sorter: "number_sorter",
+    },
     form: {
       values: {
         name: "",

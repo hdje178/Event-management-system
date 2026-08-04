@@ -114,21 +114,24 @@ export function validateRegistrationForm(form: FormShape<{ name?: string; email?
 }
 
 export function validateEditUsersTable(values: { name?: string; email?: string }) {
-  const validationObj: Record<string, boolean> = {};
-  const fields = ["name", "email"] as const;
-  for (const field of fields) {
-    const v = (values[field] ?? "").toString().trim();
-    validationObj[field] = v !== "" && v.length <= 50;
-  }
+  // Повертаємо явний обʼєкт без кастів
+  const name = (values.name ?? "").trim();
+  const email = (values.email ?? "").trim();
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (validationObj.email !== false && emailRegex.test(values.email ?? "") === false) {
-    validationObj.email = false;
-  }
-  return validationObj;
+  return {
+    name: name !== "" && name.length <= 50,
+    email: email !== "" && email.length <= 50 && emailRegex.test(email),
+  } as const;
 }
 
 export function validateEditEventsTable(values: { name?: string; date?: string; location?: string; capacity?: string | number; description?: string }) {
-  const validationObj: Record<string, boolean> = {};
+  const validationObj: { name: boolean; date: boolean; location: boolean; capacity: boolean; description: boolean } = {
+    name: false,
+    date: false,
+    location: false,
+    capacity: false,
+    description: false,
+  };
   const fields = ["name", "date", "location", "capacity", "description"] as const;
   for (const field of fields) {
     const v = (values[field] ?? "").toString().trim();

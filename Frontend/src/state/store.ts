@@ -177,7 +177,7 @@ export function createStore() {
     addRegistration: (eventId: string | number) => addRegistration(eventId),
     checkAuth: async () => {
       console.log("checkAuth START", Date.now());
-      store.setState({ auth: { ...state.auth, isLoading: true, screenError: null } as any });
+      store.setState({ auth: { ...state.auth, isLoading: true, screenError: null } });
       try {
         if (!tokenStore.get()) {
           const refreshRes = await Refresh();
@@ -191,7 +191,7 @@ export function createStore() {
               user: res.data.user,
               isLoading: false,
               screenError: null,
-            } as any,
+            },
           });
           const profileRes = await GetMyProfile();
           if (profileRes.ok) {
@@ -200,7 +200,7 @@ export function createStore() {
                 ...state.auth,
                 userInfo: profileRes.data.user,
                 isLoading: false,
-              } as any,
+              },
             });
           }
         } else {
@@ -210,14 +210,14 @@ export function createStore() {
               ...state.auth,
               user: null,
               isLoading: false,
-              screenError: res.error as any,
-            } as any,
+              screenError: res.error,
+            },
           });
         }
         return res;
       } catch {
         tokenStore.clear();
-        store.setState({ auth: { ...state.auth, isLoading: false, screenError: "Unexpected error", user: null } as any });
+        store.setState({ auth: { ...state.auth, isLoading: false, screenError: "Unexpected error", user: null } });
       }
     },
     loadUsers: async (): Promise<void> => {
@@ -226,7 +226,7 @@ export function createStore() {
       const timeout = createTimeoutSignal(usersController.signal, 10000);
       const reqId = ++usersReqId;
 
-      store.setState({ users: { ...state.users, isLoading: true, screenError: null } as any });
+      store.setState({ users: { ...state.users, isLoading: true, screenError: null } });
       const params = new URLSearchParams();
       if (state.users.ui.filterText) params.append("search", state.users.ui.filterText);
       if (state.users.ui.sorter) params.append("sortBy", state.users.ui.sorter);
@@ -235,23 +235,23 @@ export function createStore() {
         const res = await getUsers(params.toString(), timeout.signal);
         await new Promise((r) => setTimeout(r, 500));
         if (reqId !== usersReqId) {
-          store.setState({ users: { ...state.users, isLoading: false } as any });
+          store.setState({ users: { ...state.users, isLoading: false } });
           return;
         }
         if (!res.ok) {
-          store.setState({ users: { ...state.users, screenError: res.error, isLoading: false } as any });
+          store.setState({ users: { ...state.users, screenError: res.error, isLoading: false } });
           {
             const d = res.error.details as { error?: { message?: string } } | undefined;
             runAnimationAlert(store, d?.error?.message || "Помилка завантаження користувачів");
           }
           return;
         }
-        store.setState({ users: { ...state.users, list: res.data.data, isLoading: false } as any });
+        store.setState({ users: { ...state.users, list: res.data.data, isLoading: false } });
         console.log("users:", res.data.data);
       } catch (e) {
         const err = e as { name?: string };
         if (err?.name !== "AbortError") {
-          store.setState({ users: { ...state.users, screenError: "Unexpected error", isLoading: false } as any });
+          store.setState({ users: { ...state.users, screenError: "Unexpected error", isLoading: false } });
         }
       } finally {
         timeout.clear();
@@ -263,7 +263,7 @@ export function createStore() {
       const timeout = createTimeoutSignal(eventsController.signal, 10000);
       const reqId = ++eventsReqId;
 
-      store.setState({ events: { ...state.events, isLoading: true, screenError: null } as any });
+      store.setState({ events: { ...state.events, isLoading: true, screenError: null } });
       const params = new URLSearchParams();
       if (state.events.ui.filterText) params.append("search", state.events.ui.filterText);
       if (state.events.ui.sorter) params.append("sortBy", state.events.ui.sorter);
@@ -271,22 +271,22 @@ export function createStore() {
       try {
         const res = await getEvents(params.toString(), timeout.signal);
         if (reqId !== eventsReqId) {
-          store.setState({ events: { ...state.events, isLoading: false } as any });
+          store.setState({ events: { ...state.events, isLoading: false } });
           return;
         }
         if (!res.ok) {
-          store.setState({ events: { ...state.events, screenError: res.error, isLoading: false } as any });
+          store.setState({ events: { ...state.events, screenError: res.error, isLoading: false } });
           {
             const d = res.error.details as { error?: { message?: string } } | undefined;
             runAnimationAlert(store, d?.error?.message || "Помилка завантаження подій");
           }
           return;
         }
-        store.setState({ events: { ...state.events, list: res.data.data, isLoading: false } as any });
+        store.setState({ events: { ...state.events, list: res.data.data, isLoading: false } });
       } catch (e) {
         const err = e as { name?: string };
         if (err?.name !== "AbortError") {
-          store.setState({ events: { ...state.events, screenError: "Unexpected error", isLoading: false } as any });
+          store.setState({ events: { ...state.events, screenError: "Unexpected error", isLoading: false } });
         }
       } finally {
         timeout.clear();
@@ -299,23 +299,23 @@ export function createStore() {
       const timeout = createTimeoutSignal(myRegsController.signal, 10000);
       const reqId = ++myRegsReqId;
 
-      store.setState({ registration: { ...state.registration, isLoading: true, screenError: null } as any });
+      store.setState({ registration: { ...state.registration, isLoading: true, screenError: null } });
       try {
         const res = await getMyRegistration(timeout.signal);
         if (reqId !== myRegsReqId) {
-          store.setState({ registration: { ...state.registration, isLoading: false } as any });
+          store.setState({ registration: { ...state.registration, isLoading: false } });
           return;
         }
         if (!res.ok) {
-          store.setState({ registration: { ...state.registration, screenError: res.error, isLoading: false } as any });
+          store.setState({ registration: { ...state.registration, screenError: res.error, isLoading: false } });
           return;
         }
         const items = res.ok ? res.data.data : [];
-        store.setState({ registration: { ...state.registration, list: items, isLoading: false } as any });
+        store.setState({ registration: { ...state.registration, list: items, isLoading: false } });
       } catch (e) {
         const err = e as { name?: string };
         if (err?.name !== "AbortError") {
-          store.setState({ registration: { ...state.registration, screenError: "Unexpected error", isLoading: false } as any });
+          store.setState({ registration: { ...state.registration, screenError: "Unexpected error", isLoading: false } });
         }
       } finally {
         timeout.clear();
@@ -329,35 +329,35 @@ export function createStore() {
       const timeout = createTimeoutSignal(allRegsController.signal, 10000);
       const reqId = ++allRegsReqId;
 
-      store.setState({ registration: { ...state.registration, isLoading: true, screenError: null } as any });
+      store.setState({ registration: { ...state.registration, isLoading: true, screenError: null } });
       try {
         const res = await getRegistrations(timeout.signal);
         if (reqId !== allRegsReqId) {
-          store.setState({ registration: { ...state.registration, isLoading: false } as any });
+          store.setState({ registration: { ...state.registration, isLoading: false } });
           return;
         }
         if (!res.ok) {
-          store.setState({ registration: { ...state.registration, screenError: res.error, isLoading: false } as any });
+          store.setState({ registration: { ...state.registration, screenError: res.error, isLoading: false } });
           return;
         }
         const items = res.ok ? res.data.data : [];
-        store.setState({ registration: { ...state.registration, list: items, isLoading: false } as any });
+        store.setState({ registration: { ...state.registration, list: items, isLoading: false } });
         console.log("allRegs:", items);
       } catch (e) {
         const err = e as { name?: string };
         if (err?.name !== "AbortError") {
-          store.setState({ registration: { ...state.registration, screenError: "Unexpected error", isLoading: false } as any });
+          store.setState({ registration: { ...state.registration, screenError: "Unexpected error", isLoading: false } });
         }
       } finally {
         timeout.clear();
       }
     },
     deleteUsers: async (id: number | string): Promise<void> => {
-      store.setState({ users: { ...state.users, isLoading: true, screenError: null } as any });
+      store.setState({ users: { ...state.users, isLoading: true, screenError: null } });
       try {
         const res = await deleteUser(id);
         if (!res.ok) {
-          store.setState({ users: { ...state.users, screenError: res.error, isLoading: false } as any });
+          store.setState({ users: { ...state.users, screenError: res.error, isLoading: false } });
           {
             const d = res.error.details as { error?: { message?: string } } | undefined;
             runAnimationAlert(store, d?.error?.message ?? "Помилка видалення користувача");
@@ -370,11 +370,11 @@ export function createStore() {
             list: state.users.list.filter((e) => e.id !== (id as number)),
             screenError: null,
             isLoading: false,
-          } as any,
+          },
         });
         runAnimationAlert(store, "Успішно видалено!✅");
       } catch {
-        store.setState({ users: { ...state.users, screenError: "Unexpected error", isLoading: false } as any });
+        store.setState({ users: { ...state.users, screenError: "Unexpected error", isLoading: false } });
       }
     },
     deleteRegistration: async (id: number | string): Promise<boolean> => {
@@ -395,11 +395,11 @@ export function createStore() {
       }
     },
     deleteEvents: async (id: number | string): Promise<void> => {
-      store.setState({ events: { ...state.events, isLoading: true, screenError: null } as any });
+      store.setState({ events: { ...state.events, isLoading: true, screenError: null } });
       try {
         const res = await deleteEvent(id);
         if (!res.ok) {
-          store.setState({ events: { ...state.events, screenError: res.error, isLoading: false } as any });
+          store.setState({ events: { ...state.events, screenError: res.error, isLoading: false } });
           const d = res.error.details as { error?: { message?: string } } | undefined;
           runAnimationAlert(store, d?.error?.message ?? "Помилка видалення події");
           return;
@@ -411,11 +411,11 @@ export function createStore() {
             list: state.events.list.filter((e) => e.id !== (id as number)),
             screenError: null,
             isLoading: false,
-          } as any,
+          },
         });
         runAnimationAlert(store, "Успішно видалено!✅");
       } catch {
-        store.setState({ events: { ...state.events, screenError: "Unexpected error", isLoading: false } as any });
+        store.setState({ events: { ...state.events, screenError: "Unexpected error", isLoading: false } });
       }
     },
     resetSearch: (): void => {
@@ -427,7 +427,7 @@ export function createStore() {
       id: number | string,
       values: { name: string; email: string; password?: string },
     ): Promise<void> => {
-      state.users.ui.editErrors = validateEditUsersTable(values) as any;
+      state.users.ui.editErrors = validateEditUsersTable(values);
 
       const isValid = Object.values(state.users.ui.editErrors).every((v) => v === true);
       console.log("isValid:", isValid);
@@ -441,34 +441,34 @@ export function createStore() {
         name: values.name,
         email: values.email,
       } as const;
-      store.setState({ users: { ...state.users, isLoading: true, screenError: null } as any });
+      store.setState({ users: { ...state.users, isLoading: true, screenError: null } });
       try {
         const res = await updateUserPatch(id, payload);
         if (!res.ok) {
-          const err: any = res.error ?? {};
+          const err = res.error ?? {};
 
-          const message = err?.details?.error?.message || err?.message || "Помилка збереження";
+          const message = getErrorMessage((err as unknown as { details?: unknown }).details) || (err as { message?: string }).message || "Помилка збереження";
 
-          const isConflict = err.status === 409 || err.code === "CONFLICT" || err.kind === "conflict";
+          const isConflict = (err as { status?: number; code?: string; kind?: string }).status === 409 || (err as { status?: number; code?: string; kind?: string }).code === "CONFLICT" || (err as { status?: number; code?: string; kind?: string }).kind === "conflict";
 
-          const nextEditErrors: Record<string, boolean> = { ...state.users.ui.editErrors } as any;
+          const nextEditErrors: typeof state.users.ui.editErrors = { ...state.users.ui.editErrors };
           if (isConflict) {
             nextEditErrors.email = false;
           }
-          state.users.ui.editErrors = nextEditErrors as any;
-          store.setState({ users: { ...state.users, screenError: err, isLoading: false } as any });
+          state.users.ui.editErrors = nextEditErrors;
+          store.setState({ users: { ...state.users, screenError: res.error, isLoading: false } });
 
           runAnimationAlert(store, message);
           return;
         }
         await store.loadUsers();
       } catch {
-        store.setState({ users: { ...state.users, screenError: "Unexpected error", isLoading: false } as any });
+        store.setState({ users: { ...state.users, screenError: "Unexpected error", isLoading: false } });
         runAnimationAlert(store, "Unexpected error");
       }
       state.users.ui.editingId = null;
       state.users.ui.editValues = null;
-      state.users.ui.editErrors = structuredClone(initialState.users.ui.editErrors) as any;
+      state.users.ui.editErrors = structuredClone(initialState.users.ui.editErrors);
 
       listeners.forEach((fn) => fn(state));
       runAnimationAlert(store, "Успішно збережено!✅");
@@ -477,7 +477,7 @@ export function createStore() {
       id: number | string,
       values: { name: string; date: string; location: string; capacity: string | number; description?: string },
     ): Promise<void> => {
-      state.events.ui.editErrors = validateEditEventsTable(values) as any;
+      state.events.ui.editErrors = validateEditEventsTable(values);
 
       const isValid = Object.values(state.events.ui.editErrors).every((v) => v === true);
       console.log("isValid:", isValid);
@@ -502,24 +502,24 @@ export function createStore() {
       }
 
       store.setState({
-        events: { ...state.events, isLoading: true, screenError: null } as any,
+        events: { ...state.events, isLoading: true, screenError: null },
       });
 
       try {
         const res = await updateEventsPatch(id, payload);
         if (!res.ok) {
-          const err: any = res.error ?? {};
+          const err = res.error ?? {};
 
-          const message = err?.details?.error?.message || err?.message || "Помилка збереження";
+          const message = getErrorMessage((err as unknown as { details?: unknown }).details) || (err as { message?: string }).message || "Помилка збереження";
 
-          const isConflict = err.status === 409 || err.code === "CONFLICT" || err.kind === "conflict";
+          const isConflict = (err as { status?: number; code?: string; kind?: string }).status === 409 || (err as { status?: number; code?: string; kind?: string }).code === "CONFLICT" || (err as { status?: number; code?: string; kind?: string }).kind === "conflict";
 
-          const nextEditErrors: Record<string, boolean> = { ...state.events.ui.editErrors } as any;
+          const nextEditErrors: typeof state.events.ui.editErrors = { ...state.events.ui.editErrors };
           if (isConflict) {
             nextEditErrors.name = false;
           }
-          state.events.ui.editErrors = nextEditErrors as any;
-          store.setState({ events: { ...state.events, screenError: err, isLoading: false } as any });
+          state.events.ui.editErrors = nextEditErrors;
+          store.setState({ events: { ...state.events, screenError: res.error, isLoading: false } });
 
           runAnimationAlert(store, message);
           return;
@@ -527,11 +527,11 @@ export function createStore() {
 
         await store.loadEvents();
       } catch {
-        store.setState({ events: { ...state.events, screenError: "Unexpected error", isLoading: false } as any });
+        store.setState({ events: { ...state.events, screenError: "Unexpected error", isLoading: false } });
       }
       state.events.ui.editingId = null;
       state.events.ui.editValues = null;
-      state.events.ui.editErrors = structuredClone(initialState.events.ui.editErrors) as any;
+      state.events.ui.editErrors = structuredClone(initialState.events.ui.editErrors);
 
       listeners.forEach((fn) => fn(state));
       runAnimationAlert(store, "Успішно збережено!✅");
@@ -542,8 +542,9 @@ export function createStore() {
       state.users.ui.editValues = {
         name: item.name,
         email: item.email,
-        password: (item as any).password,
-      } as any;
+        // password не повертається з бекенду — залишаємо порожнім рядком
+        password: "",
+      };
       listeners.forEach((fn) => fn(state));
     },
     editEvents: (id: number): void => {
@@ -593,33 +594,38 @@ export function createStore() {
     },
     updateFieldUsers: (name: string, value: string): void => {
       state.users.form.touched[name] = true;
-      // @ts-expect-error index assignment
-      state.users.form.values[name] = value as any;
-      state.users.form.errors = validateUsersForm(state.users.form as any) as any;
+      if (name === "name") state.users.form.values.name = value;
+      if (name === "email") state.users.form.values.email = value;
+      if (name === "password") state.users.form.values.password = value;
+      state.users.form.errors = validateUsersForm(state.users.form);
       state.users.form.isValid = Object.keys(state.users.form.errors).length === 0;
       listeners.forEach((fn) => fn(state));
     },
     updateFieldLogin: (name: string, value: string): void => {
       state.login.form.touched[name] = true;
-      // @ts-expect-error index assignment
-      state.login.form.values[name] = value as any;
-      state.login.form.errors = validateLoginForm(state.login.form as any) as any;
+      if (name === "email") state.login.form.values.email = value;
+      if (name === "password") state.login.form.values.password = value;
+      state.login.form.errors = validateLoginForm(state.login.form);
       state.login.form.isValid = Object.keys(state.login.form.errors).length === 0;
       listeners.forEach((fn) => fn(state));
     },
     updateFieldRegistration: (name: string, value: string): void => {
       state.userRegistrations.form.touched[name] = true;
-      // @ts-expect-error index assignment
-      state.userRegistrations.form.values[name] = value as any;
-      state.userRegistrations.form.errors = validateRegistrationForm(state.userRegistrations.form as any) as any;
+      if (name === "name") state.userRegistrations.form.values.name = value;
+      if (name === "email") state.userRegistrations.form.values.email = value;
+      if (name === "password") state.userRegistrations.form.values.password = value;
+      state.userRegistrations.form.errors = validateRegistrationForm(state.userRegistrations.form);
       state.userRegistrations.form.isValid = Object.keys(state.userRegistrations.form.errors).length === 0;
       listeners.forEach((fn) => fn(state));
     },
     updateFieldEvents: (name: string, value: string): void => {
       state.events.form.touched[name] = true;
-      // @ts-expect-error index assignment
-      state.events.form.values[name] = value as any;
-      state.events.form.errors = validateEventsForm(state.events.form as any) as any;
+      if (name === "name") state.events.form.values.name = value;
+      if (name === "date") state.events.form.values.date = value;
+      if (name === "location") state.events.form.values.location = value;
+      if (name === "capacity") state.events.form.values.capacity = value;
+      if (name === "description") state.events.form.values.description = value;
+      state.events.form.errors = validateEventsForm(state.events.form);
       state.events.form.isValid = Object.keys(state.events.form.errors).length === 0;
       listeners.forEach((fn) => fn(state));
     },
@@ -628,8 +634,8 @@ export function createStore() {
         name: true,
         email: true,
         password: true,
-      } as any;
-      const errors = validateUsersForm(state.users.form as any) as any;
+      };
+      const errors = validateUsersForm(state.users.form);
       state.users.form.errors = errors;
       state.users.form.isValid = Object.keys(errors).length === 0;
 
@@ -639,9 +645,9 @@ export function createStore() {
       }
       console.log(state.users.form.values);
       const toAdd: CreateUserDto = {
-        name: (state.users.form.values as any).name,
-        email: (state.users.form.values as any).email,
-        password: (state.users.form.values as any).password,
+        name: state.users.form.values.name,
+        email: state.users.form.values.email,
+        password: state.users.form.values.password,
       };
       const res = await addUsers(toAdd).catch((e) => console.error("Error adding user:", e));
       if (!res) {
@@ -649,7 +655,7 @@ export function createStore() {
         runAnimationAlert(store, "Не вдалось додати!");
         return;
       }
-      state.users.form = structuredClone(initialState.users.form) as any;
+      state.users.form = structuredClone(initialState.users.form);
       state.users.ui.filterItems = state.users.list.filter((item) =>
         item.name.toLowerCase().includes(state.users.ui.filterText.toLowerCase()),
       );
@@ -660,8 +666,8 @@ export function createStore() {
       state.login.form.touched = {
         email: true,
         password: true,
-      } as any;
-      const errors = validateLoginForm(state.login.form as any) as any;
+      };
+      const errors = validateLoginForm(state.login.form);
       state.login.form.errors = errors;
       state.login.form.isValid = Object.keys(errors).length === 0;
 
@@ -670,25 +676,27 @@ export function createStore() {
         return;
       }
       const toAdd = {
-        email: (state.login.form.values as any).email,
-        password: (state.login.form.values as any).password,
+        email: state.login.form.values.email,
+        password: state.login.form.values.password,
       };
       const res = await Login(toAdd);
       console.log(res);
       if (!res.ok) {
-        (state.login.form as any).generalError = (res.error as any)?.details?.error?.message ?? "Сталась невідома помилка";
+        state.login.form.generalError = getErrorMessage(res.error?.details) ?? "Сталась невідома помилка";
         listeners.forEach((fn) => fn(state));
-        runAnimationAlert(store, (res.error as any)?.details?.error?.message || "Помилка регістрації");
+        runAnimationAlert(store, getErrorMessage(res.error?.details) || "Помилка регістрації");
         return;
       }
-
-      (state.auth as any) = {
-        ...state.auth,
-        name: (res.data as any).name,
-      };
-      state.login.form = structuredClone(initialState.login.form) as any;
+      // Після успішного логіну: зберігаємо базові дані користувача у userInfo,
+      // а деталі (TokenPayload) беремо з /auth/me (простіше ніж декодувати JWT вручну).
+      state.auth = { ...state.auth, userInfo: res.data.user };
+      const me = await GetMe();
+      if (me.ok) state.auth = { ...state.auth, user: me.data.user };
+      const profileRes = await GetMyProfile();
+      if (profileRes.ok) state.auth = { ...state.auth, userInfo: profileRes.data.user };
+      state.login.form = structuredClone(initialState.login.form);
       listeners.forEach((fn) => fn(state));
-      runAnimationAlert(store, `Вітаємо, ${(res.data as any).user.name ? (res.data as any).user.name : "користувачу"}!`);
+      runAnimationAlert(store, `Вітаємо, ${res.data.user.name ? res.data.user.name : "користувачу"}!`);
       const params = new URLSearchParams(window.location.search);
       const redirectPage = params.get("redirect") || "/pages/events.html";
       if (
@@ -707,8 +715,8 @@ export function createStore() {
         name: true,
         email: true,
         password: true,
-      } as any;
-      const errors = validateRegistrationForm(state.login.form as any) as any;
+      };
+      const errors = validateRegistrationForm(state.userRegistrations.form);
       state.userRegistrations.form.errors = errors;
       state.userRegistrations.form.isValid = Object.keys(errors).length === 0;
 
@@ -717,37 +725,39 @@ export function createStore() {
         return;
       }
       const toRegister = {
-        name: (state.userRegistrations.form.values as any).name,
-        email: (state.userRegistrations.form.values as any).email,
-        password: (state.userRegistrations.form.values as any).password,
+        name: state.userRegistrations.form.values.name,
+        email: state.userRegistrations.form.values.email,
+        password: state.userRegistrations.form.values.password,
       };
 
       const res = await Register(toRegister);
       if (!res.ok) {
-        (state.userRegistrations.form as any).generalError = (res.error as any)?.details?.error?.message ?? null;
+        state.userRegistrations.form.generalError = getErrorMessage(res.error?.details) ?? null;
         listeners.forEach((fn) => fn(state));
-        runAnimationAlert(store, (res.error as any)?.details?.error?.message || "Помилка реєстрації");
+        runAnimationAlert(store, getErrorMessage(res.error?.details) || "Помилка реєстрації");
         return;
       }
       const toAdd = {
-        email: (state.userRegistrations.form.values as any).email,
-        password: (state.userRegistrations.form.values as any).password,
+        email: state.userRegistrations.form.values.email,
+        password: state.userRegistrations.form.values.password,
       };
       const loginRes = await Login(toAdd);
       if (!loginRes.ok) {
-        const errMsg = (loginRes.error as any)?.details?.error?.message || "Помилка авторизації після реєстрації";
-        (state.userRegistrations.form as any).generalError = errMsg;
+        const errMsg = getErrorMessage(loginRes.error?.details) || "Помилка авторизації після реєстрації";
+        state.userRegistrations.form.generalError = errMsg;
         listeners.forEach((fn) => fn(state));
         runAnimationAlert(store, errMsg);
         return;
       }
-      (state.auth as any) = {
-        ...state.auth,
-        name: (res.data as any).name,
-      };
-      state.login.form = structuredClone(initialState.login.form) as any;
+      // Після реєстрації також отримуємо користувача з /auth/me і профіль
+      state.auth = { ...state.auth, userInfo: res.data.user };
+      const me2 = await GetMe();
+      if (me2.ok) state.auth = { ...state.auth, user: me2.data.user };
+      const profileRes2 = await GetMyProfile();
+      if (profileRes2.ok) state.auth = { ...state.auth, userInfo: profileRes2.data.user };
+      state.login.form = structuredClone(initialState.login.form);
       listeners.forEach((fn) => fn(state));
-      runAnimationAlert(store, `Вітаємо, ${(res.data as any).user.name ? (res.data as any).user.name : "користувачу"}!`);
+      runAnimationAlert(store, `Вітаємо, ${res.data.user.name ? res.data.user.name : "користувачу"}!`);
       const params = new URLSearchParams(window.location.search);
       const redirectPage = params.get("redirect") || "/pages/events.html";
       if (
@@ -768,8 +778,8 @@ export function createStore() {
         location: true,
         capacity: true,
         description: true,
-      } as any;
-      const errors = validateEventsForm(state.events.form as any) as any;
+      };
+      const errors = validateEventsForm(state.events.form);
       state.events.form.errors = errors;
       state.events.form.isValid = Object.keys(errors).length === 0;
 
@@ -779,13 +789,15 @@ export function createStore() {
       }
       console.log(state.events.form.values);
       const toAdd: CreateEventDto = {
-        ...(state.events.form.values as any),
-        capacity: Number((state.events.form.values as any).capacity),
-        description: ((state.events.form.values as any).description ?? "").trim() || "-",
+        name: state.events.form.values.name,
+        date: state.events.form.values.date,
+        location: state.events.form.values.location,
+        capacity: Number(state.events.form.values.capacity),
+        description: (state.events.form.values.description ?? "").trim() || "-",
       };
       const success = await addEvents(toAdd).catch((e) => console.error("Error adding event:", e));
       if (!success) return;
-      state.events.form = structuredClone(initialState.events.form) as any;
+      state.events.form = structuredClone(initialState.events.form);
       state.events.ui.filterItems = state.events.list.filter((item) =>
         item.name.toLowerCase().includes(state.events.ui.filterText.toLowerCase()),
       );
@@ -795,43 +807,43 @@ export function createStore() {
     logout: async (): Promise<void> => {
       const res = await Logout();
       if (!res.ok) {
-        runAnimationAlert(store, ((res.error as any).details?.message) || res.error.message);
+        runAnimationAlert(store, getErrorMessage(res.error?.details) || res.error.message);
         return;
       }
-      state.login.form = structuredClone(initialState.login.form) as any;
-      (state.login.form as any).generalError = null;
+      state.login.form = structuredClone(initialState.login.form);
+      state.login.form.generalError = null;
       store.setState({
-        auth: { ...state.auth, user: null } as any,
-        login: { ...state.login, form: structuredClone(initialState.login.form) as any } as any,
+        auth: { ...state.auth, user: null },
+        login: { ...state.login, form: structuredClone(initialState.login.form) },
       });
       listeners.forEach((fn) => fn(state));
       window.location.replace("/pages/events.html");
     },
     resetFormUsers: (): void => {
-      state.users.form.touched = {} as any;
-      state.users.form.values = structuredClone(initialState.users.form.values) as any;
-      state.users.form.errors = structuredClone(initialState.users.form.errors) as any;
+      state.users.form.touched = {};
+      state.users.form.values = structuredClone(initialState.users.form.values);
+      state.users.form.errors = structuredClone(initialState.users.form.errors);
       state.users.form.isValid = true;
       listeners.forEach((fn) => fn(state));
     },
     resetFormLogin: (): void => {
-      state.login.form.touched = {} as any;
-      state.login.form.values = structuredClone(initialState.login.form.values) as any;
-      state.login.form.errors = structuredClone(initialState.login.form.errors) as any;
+      state.login.form.touched = {};
+      state.login.form.values = structuredClone(initialState.login.form.values);
+      state.login.form.errors = structuredClone(initialState.login.form.errors);
       state.login.form.isValid = true;
       listeners.forEach((fn) => fn(state));
     },
     resetFormRegistration: (): void => {
-      state.userRegistrations.form.touched = {} as any;
-      state.userRegistrations.form.values = structuredClone(initialState.userRegistrations.form.values) as any;
-      state.userRegistrations.form.errors = structuredClone(initialState.userRegistrations.form.errors) as any;
+      state.userRegistrations.form.touched = {};
+      state.userRegistrations.form.values = structuredClone(initialState.userRegistrations.form.values);
+      state.userRegistrations.form.errors = structuredClone(initialState.userRegistrations.form.errors);
       state.userRegistrations.form.isValid = true;
       listeners.forEach((fn) => fn(state));
     },
     resetFormEvents: (): void => {
-      state.events.form.touched = {} as any;
-      state.events.form.values = structuredClone(initialState.events.form.values) as any;
-      state.events.form.errors = structuredClone(initialState.events.form.errors) as any;
+      state.events.form.touched = {};
+      state.events.form.values = structuredClone(initialState.events.form.values);
+      state.events.form.errors = structuredClone(initialState.events.form.errors);
       state.events.form.isValid = true;
       listeners.forEach((fn) => fn(state));
     },
