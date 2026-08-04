@@ -38,8 +38,8 @@ export function runAnimationAlert(_store: unknown, text: string): void {
   const textNode = toolbox.querySelector(".text") as HTMLElement;
   textNode.textContent = text;
 
-  void (toolbox as any).offsetWidth; // force reflow, maintain original behavior
-  void (bar_fill as any).offsetWidth;
+  void (toolbox).offsetWidth;
+  void (bar_fill).offsetWidth;
 
   toolbox.classList.add("show");
   bar_fill.classList.add("run");

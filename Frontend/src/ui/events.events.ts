@@ -86,7 +86,7 @@ export function bindEventsEvents(store: any) {
 
     if (s.events.ui.editingId !== id) return;
 
-    const cells = (row as HTMLTableRowElement).children as any;
+    const cells = (row as HTMLTableRowElement).children;
 
     s.events.ui.editValues = {
       name: (cells[1].textContent || "").trim(),
