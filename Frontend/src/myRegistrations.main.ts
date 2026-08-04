@@ -21,18 +21,17 @@ const user = store.getState().auth.user;
 if (!user) {
   document.body.classList.add("not-ready");
   window.location.replace('/pages/login.html?redirect=/pages/myRegistrations.html');
-  // Якщо користувач не авторизований — далі не продовжуємо
-  return;
 }
-
-isAuthReady = true;
-document.body.classList.remove("not-ready");
-bindMyRegistrationsEvents(store);
-const isAdmin = user.role.toLowerCase() === 'admin';
-if (isAdmin) {
-  await store.loadUsers();
-  await store.loadAllRegistrations();
-} else {
-  await store.loadMyRegistrations();
+else {
+    isAuthReady = true;
+    document.body.classList.remove("not-ready");
+    bindMyRegistrationsEvents(store);
+    const isAdmin = user.role.toLowerCase() === 'admin';
+    if (isAdmin) {
+        await store.loadUsers();
+        await store.loadAllRegistrations();
+    } else {
+        await store.loadMyRegistrations();
+    }
+    await store.loadEvents();
 }
-await store.loadEvents();
