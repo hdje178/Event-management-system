@@ -5,7 +5,6 @@ import { renderUsersApp } from "./ui/users.render.js";
 
 const store = createStore();
 let isAuthReady = false;
-
 store.subscribe((state) => saveToLocalStorage(state));
 store.subscribe((state) => {
   const scrollY = window.scrollY;
@@ -14,7 +13,6 @@ store.subscribe((state) => {
   renderUsersApp(state);
   window.scrollTo(0, scrollY);
 });
-
 const res = await store.checkAuth();
 const user = store.getState().auth.user;
 console.log("CheckAuth", res);
@@ -23,7 +21,6 @@ if (!user || user.role.toLowerCase() !== "admin") {
   document.body.classList.add("not-ready");
   window.location.replace('/pages/login.html?redirect=/pages/events.html');
 }
-
 isAuthReady = true;
 document.body.classList.remove("not-ready");
 bindEventsUsers(store);

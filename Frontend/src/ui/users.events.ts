@@ -1,11 +1,10 @@
 import {createStore} from "../state/store";
 //
 export function bindEventsUsers(store: ReturnType<typeof createStore>) {
-  const searchContainer = document.querySelector(".search_for_element") as HTMLElement | null;
-  function getDocumentScroller(): HTMLElement {
-    if (document.scrollingElement) return document.scrollingElement as HTMLElement;
-    return document.compatMode === 'CSS1Compat' ? (document.documentElement as HTMLElement) : (document.body as HTMLElement);
-  }
+  // function getDocumentScroller(): HTMLElement {
+  //   if (document.scrollingElement) return document.scrollingElement as HTMLElement;
+  //   return document.compatMode === 'CSS1Compat' ? (document.documentElement as HTMLElement) : (document.body as HTMLElement);
+  // }
   const input = document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("#register-form input, #register-form textarea");
   input.forEach((el) => {
     el.addEventListener("input", (event: Event) => {

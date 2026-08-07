@@ -22,8 +22,10 @@ function renderRegistrationsTable(state: AppState) {
   const thead = document.querySelector(".register_table_head") as HTMLElement;
   const items = state.registration.list;
   const events = state.events.list;
+  const authUser = state.auth.user;
+  const isAdmin = authUser?.role.toLowerCase() === 'admin';
 
-  if (state.auth.user) {
+  if (authUser) {
     thead.innerHTML = `<tr>
             <th>Номер</th>
             <th>Назва події</th>
@@ -43,11 +45,18 @@ function renderRegistrationsTable(state: AppState) {
 
   tbody.innerHTML = items
     .map((item, index: number) => {
-      const event = events.find((e) => String(e.id) === item.eventId);
+      const event = events.find((e) => (e.id) === item.eventId);
+      console.log("Event" ,event);
       const eventName = event?.name ?? "—";
       const eventDate = event ? new Date(event.date).toLocaleDateString("uk-UA") : "—";
       const eventLocation = event?.location ?? "—";
-      const user = state.users.list.find((u) => String(u.id) === item.userId);
+      let user;
+      if (isAdmin){
+          user = state.users.list.find((u) =>(u.id) === item.userId);
+      }else{
+          user = state.auth.userInfo
+      }
+      console.log("User" ,user);
       const userName = user?.name ?? "—";
       const userEmail = user?.email ?? "—";
 

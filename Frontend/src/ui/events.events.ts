@@ -3,11 +3,6 @@ import {createStore} from "../state/store.js";
 
 export function bindEventsEvents(store: ReturnType<typeof createStore>) {
   const searchContainer = document.querySelector(".search_for_element") as HTMLElement;
-  function getDocumentScroller() {
-    if (document.scrollingElement) return document.scrollingElement as HTMLElement;
-    return document.compatMode === "CSS1Compat" ? (document.documentElement as HTMLElement) : (document.body as HTMLElement);
-  }
-  const scroller = getDocumentScroller();
   searchContainer.addEventListener("click", function (event: MouseEvent) {
     const target = event.target as HTMLElement;
     const input = document.querySelector("#input_for_search") as HTMLInputElement;
@@ -38,7 +33,9 @@ export function bindEventsEvents(store: ReturnType<typeof createStore>) {
     });
   });
   const tbody = document.querySelector(".register_table_body") as HTMLElement;
-  tbody.addEventListener("click", async (event: MouseEvent) => {
+
+    tbody.addEventListener("click", async (event: MouseEvent) => {
+      console.log("CLICK IN TBODY");
     const target = event.target as HTMLElement;
 
     if (target.classList.contains("delete-btn")) {
@@ -52,7 +49,6 @@ export function bindEventsEvents(store: ReturnType<typeof createStore>) {
     }
 
     if (target.classList.contains("save-btn")) {
-    const row = (target as HTMLElement).closest("tr") as HTMLTableRowElement | null;
 
     const id = Number((target as HTMLElement).dataset.id);
     const editValues = store.getState().events.ui.editValues;
@@ -68,17 +64,17 @@ export function bindEventsEvents(store: ReturnType<typeof createStore>) {
     await store.saveEvents(id, payload);
 
     }
-    const regBtn = (target as HTMLElement).closest('.userRegistrations-btn') as HTMLButtonElement | null;
-    if (regBtn) {
-      const eventId = (regBtn as HTMLButtonElement).dataset.id as string;
-      (regBtn as HTMLButtonElement).disabled = true;
-      const orig = (regBtn as HTMLButtonElement).textContent || '';
-      (regBtn as HTMLButtonElement).textContent = 'Опрацювання...';
-      const ok = await store.addRegistration(eventId);
-      if (!ok) { (regBtn as HTMLButtonElement).disabled = false; (regBtn as HTMLButtonElement).textContent = orig; }
-      return;
+    if (target.classList.contains("registration-btn")){
+        const regBtn = target as HTMLButtonElement
+        const eventId = regBtn.dataset.id as string;
+        if (!eventId) return;
+        regBtn.disabled = true;
+        const orig = regBtn.textContent || '';
+        regBtn.textContent = "Опрацювання..."
+        const ok = await store.addRegistration(eventId);
+        if (!ok) { regBtn.disabled = false; regBtn.textContent = orig; }
+        return;
     }
-
   });
   tbody.addEventListener("input", (event: Event) => {
     const cell = event.target as HTMLElement;
@@ -100,7 +96,6 @@ export function bindEventsEvents(store: ReturnType<typeof createStore>) {
       description: (cells[5].textContent || "").trim(),
     };
   });
-  const app = document.querySelector("main") as HTMLElement;
   const spinner = document.querySelector(".spinner") as HTMLElement;
   const wrapper = document.querySelector(".spinner-wrapper") as HTMLElement;
   store.subscribe((state: any) => {

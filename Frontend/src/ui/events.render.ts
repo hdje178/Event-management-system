@@ -59,7 +59,7 @@ function renderEventsTable(state: AppState) {
           }</button></td>
       </tr>`;
         } else {
-          const isRegistered = state.registration.list.some((r) => r.eventId === String(item.id));
+          const isRegistered = state.registration.list.some((r) => r.eventId === item.id);
           return `
       <tr data-id="${item.id}">
         <td data-id="${item.id}">${index + 1}</td>
@@ -103,7 +103,7 @@ export function renderHeader(state: AppState) {
             <ul>
                 <li><a href="events.html">Events</a></li>
                 <li><a href="users.html">Users</a></li>
-                <li><a href="myRegistrations.html">My Registrations</a></li>
+                <li><a href="myRegistrations.html">Registration management</a></li>
                 <li><a id="logout">Logout</a></li>
             </ul>
         </nav>`;
@@ -189,7 +189,6 @@ function renderEventsThead(state: AppState) {
 
 function renderEventsForm(state: AppState) {
   const form = document.querySelector(".form_container") as HTMLElement;
-  const table = document.querySelector(".table_container") as HTMLElement;
   if (state.auth.user) {
     if (state.auth.user.role.toLowerCase() === "admin") {
       form.classList.remove("hidden");

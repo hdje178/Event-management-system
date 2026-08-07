@@ -104,22 +104,21 @@ export function createStore() {
     }
     try {
       state.registration.isSubmitting = true;
-      listeners.forEach((fn) => fn(state));
+
       const res = await addRegistrations({ eventId: String(eventId) });
       if (!res.ok) {
         state.registration.isSubmitting = false;
         state.registration.screenError = res.error;
         listeners.forEach((fn) => fn(state));
-        {
-          const d = res.error.details as { error?: { message?: string } } | undefined;
-          runAnimationAlert(store, d?.error?.message || "Не вдалося зареєструватись");
-        }
+        const d = res.error.details as { error?: { message?: string } } | undefined;
+        runAnimationAlert(store, d?.error?.message || "Не вдалося зареєструватись");
         return false;
       }
       runAnimationAlert(store, "Ви успішно зареєструвалися ✅");
       state.registration.isSubmitting = false;
       await store.loadMyRegistrations();
       await store.loadEvents();
+      listeners.forEach((fn) => fn(state));
       return true;
     } catch {
       state.registration.isSubmitting = false;
@@ -176,7 +175,7 @@ export function createStore() {
     },
     addRegistration: (eventId: string | number) => addRegistration(eventId),
     checkAuth: async () => {
-      console.log("checkAuth START", Date.now());
+      console.log("checkAuth START", new Date().toLocaleString());
       store.setState({ auth: { ...state.auth, isLoading: true, screenError: null } });
       try {
         if (!tokenStore.get()) {
@@ -270,6 +269,7 @@ export function createStore() {
 
       try {
         const res = await getEvents(params.toString(), timeout.signal);
+        await new Promise((r) => setTimeout(r, 500));
         if (reqId !== eventsReqId) {
           store.setState({ events: { ...state.events, isLoading: false } });
           return;
@@ -342,7 +342,6 @@ export function createStore() {
         }
         const items = res.ok ? res.data.data : [];
         store.setState({ registration: { ...state.registration, list: items, isLoading: false } });
-        console.log("allRegs:", items);
       } catch (e) {
         const err = e as { name?: string };
         if (err?.name !== "AbortError") {

@@ -36,7 +36,6 @@ export type FormState<TValues> = {
   generalError: string | null;
 };
 
-// Проста форма помилок для редагування таблиць: ключі тільки з відомого списку
 export type EditErrors<TFields extends string> = Record<TFields, boolean>;
 
 export type UsersUiState = {
@@ -63,7 +62,6 @@ export interface AuthState {
   isLoading: boolean;
   error: ScreenError;
   lastVisitedPage: string | null;
-  // The store augments auth with screenError during runtime; keep it permissive
   screenError?: ScreenError;
 }
 

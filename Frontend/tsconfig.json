@@ -11,6 +11,7 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "moduleDetection": "force",
-    "isolatedModules": true
+    "isolatedModules": true,
+    "noUnusedLocals": true,
   }
 }

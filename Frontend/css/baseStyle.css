@@ -1,8 +1,25 @@
-* {
-    box-sizing: border-box;
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
 }
-body , html {
-   overflow: auto;
+
+html {
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
 }
 body.not-ready #wrap {
     display: none;
@@ -171,7 +188,7 @@ input:focus, textarea:focus {
 .error {
     margin: 4px 0 0;
     font-size: 13px;
-    color: #ff0000;
+    color: #ffffff;
     min-height: 14px;
     visibility: hidden;
 }

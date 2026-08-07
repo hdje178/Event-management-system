@@ -14,12 +14,14 @@ store.subscribe((state) => {
   renderMyRegistrationsApp(state);
   window.scrollTo(0, scrollY);
 });
-
-const res = await store.checkAuth();
+const authRes = await store.checkAuth();
 const user = store.getState().auth.user;
+console.log("CheckAuth", authRes);
+console.log("auth", store.getState().auth.userInfo);
 
-if (!user) {
+if (!authRes?.ok || !user) {
   document.body.classList.add("not-ready");
+  console.log("User not logged in");
   window.location.replace('/pages/login.html?redirect=/pages/myRegistrations.html');
 }
 else {
@@ -28,10 +30,15 @@ else {
     bindMyRegistrationsEvents(store);
     const isAdmin = user.role.toLowerCase() === 'admin';
     if (isAdmin) {
-        await store.loadUsers();
+        await Promise.all([
+            store.loadEvents(),
+            store.loadUsers()
+        ])
         await store.loadAllRegistrations();
     } else {
+        await store.loadEvents();
         await store.loadMyRegistrations();
     }
-    await store.loadEvents();
+
+
 }

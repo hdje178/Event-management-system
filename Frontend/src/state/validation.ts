@@ -1,3 +1,5 @@
+
+
 export type FormShape<TValues extends Record<string, any>> = {
   values: TValues;
   touched: Record<string, boolean>;
@@ -97,8 +99,10 @@ export function validateRegistrationForm(form: FormShape<{ name?: string; email?
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (form.touched["name"] && name === "") {
     errors.name = "Поле не може бути порожнім!";
-  } else if (form.touched["name"] && (name.length < 3 || name.length > 50)) {
-    errors.name = "Мало або багато символів";
+  } else if (form.touched["name"] && (name.length < 3)) {
+    errors.name = "Замало символів";
+  } else if (form.touched["name"] && (name.length > 50)){
+    errors.name = "Забагато символів"
   }
   if (form.touched["email"] && email === "") {
     errors.email = "Поле не може бути порожнім!";
@@ -114,7 +118,6 @@ export function validateRegistrationForm(form: FormShape<{ name?: string; email?
 }
 
 export function validateEditUsersTable(values: { name?: string; email?: string }) {
-  // Повертаємо явний обʼєкт без кастів
   const name = (values.name ?? "").trim();
   const email = (values.email ?? "").trim();
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

@@ -12,9 +12,9 @@ export interface UpdateRegistrationPutDto {
 export type UpdateRegistrationPatchDto = Partial<UpdateRegistrationPutDto>;
 
 export interface RegistrationResponseDto {
-  id: string;
-  userId: string;
-  eventId: string;
+  id: number;
+  userId: number;
+  eventId: number;
   status: RegistrationStatus;
   description?: string;
 }

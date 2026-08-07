@@ -5,7 +5,7 @@ export function bindEventsRegistration(store: ReturnType<typeof createStore>) {
     "#register-form input, #register-form textarea",
   );
   input.forEach((el) => {
-    el.addEventListener("blur", (event: Event) => {
+    el.addEventListener("input", (event: Event) => {
       const target = event.target as HTMLInputElement | HTMLTextAreaElement;
       const value = target.value.trim();
       store.updateFieldRegistration(target.name, value);

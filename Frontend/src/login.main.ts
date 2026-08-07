@@ -10,9 +10,17 @@ store.subscribe((state) => {
 
 const res = await store.checkAuth();
 console.log("checkAuth result", res);
-console.log("auth state", store.getState().auth);
-if (res && res.ok) {
-  window.location.replace('/pages/events.html');
+console.log("auth state", store.getState().auth.user);
+if (res?.ok){
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get("redirect");
+
+    const target =
+        redirect && redirect.startsWith("/")
+            ? redirect
+            : "/pages/events.html";
+
+    window.location.replace(target);
 }
 
 bindEventsLogin(store);
