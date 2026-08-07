@@ -1,5 +1,0 @@
-$kind: http-request
-name: Unsafe Search Event by ID
-method: GET
-url: '{{baseUrl}}/api/events/unsafe/{{eventId}}'
-order: 4000

@@ -1,5 +1,0 @@
-$kind: collection
-name: FIT Webapp API
-variables:
-  - key: baseUrl
-    value: 'http://localhost:3000'
