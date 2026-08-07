@@ -1,0 +1,17 @@
+$kind: http-request
+name: Create Registration
+method: POST
+url: '{{baseUrl}}/api/registrations'
+order: 3000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "userId": "1",
+      "eventId": "1",
+      "status": "pending",
+      "description": "Looking forward to attending"
+    }

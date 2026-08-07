@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get Event by ID
+method: GET
+url: '{{baseUrl}}/api/events/{{eventId}}'
+order: 2000

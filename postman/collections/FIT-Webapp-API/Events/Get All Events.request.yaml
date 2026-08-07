@@ -1,0 +1,16 @@
+$kind: http-request
+name: Get All Events
+method: GET
+url: '{{baseUrl}}/api/events'
+order: 1000
+queryParams:
+  - key: limit
+    value: '20'
+  - key: offset
+    value: '0'
+  - key: search
+    value: ''
+    disabled: true
+  - key: sortBy
+    value: ''
+    disabled: true

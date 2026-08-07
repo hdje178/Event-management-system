@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get Event Registrations Count
+method: GET
+url: '{{baseUrl}}/api/events/{{eventId}}/registrations/count'
+order: 3000

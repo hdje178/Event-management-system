@@ -1,0 +1,14 @@
+$kind: http-request
+name: 'Update Event (PATCH)'
+method: PATCH
+url: '{{baseUrl}}/api/events/{{eventId}}'
+order: 6000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Updated Event Name"
+    }

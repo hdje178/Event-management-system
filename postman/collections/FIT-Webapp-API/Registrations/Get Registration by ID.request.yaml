@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get Registration by ID
+method: GET
+url: '{{baseUrl}}/api/registrations/{{registrationId}}'
+order: 2000

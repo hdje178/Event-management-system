@@ -1,0 +1,5 @@
+$kind: http-request
+name: Delete Registration
+method: DELETE
+url: '{{baseUrl}}/api/registrations/{{registrationId}}'
+order: 6000

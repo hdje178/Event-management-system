@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get All Registrations
+method: GET
+url: '{{baseUrl}}/api/registrations'
+order: 1000

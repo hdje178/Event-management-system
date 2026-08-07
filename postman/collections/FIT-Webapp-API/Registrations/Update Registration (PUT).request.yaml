@@ -1,0 +1,15 @@
+$kind: http-request
+name: 'Update Registration (PUT)'
+method: PUT
+url: '{{baseUrl}}/api/registrations/{{registrationId}}'
+order: 5000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "status": "confirmed",
+      "description": "Confirmed attendance"
+    }

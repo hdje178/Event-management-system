@@ -1,0 +1,14 @@
+$kind: http-request
+name: 'Update User (PATCH)'
+method: PATCH
+url: '{{baseUrl}}/api/users/{{userId}}'
+order: 5000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Updated Name"
+    }

@@ -1,0 +1,14 @@
+$kind: http-request
+name: 'Update Registration (PATCH)'
+method: PATCH
+url: '{{baseUrl}}/api/registrations/{{registrationId}}'
+order: 4000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "status": "confirmed"
+    }
