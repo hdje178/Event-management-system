@@ -20,4 +20,6 @@ Frontend/dist
 .idea/
 .postman/
 /node_modules
-/postman/
+postman/
+Frontend-react/
+
